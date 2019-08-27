@@ -2,18 +2,6 @@ import { merge } from 'lodash'
 
 import { returnArray } from '../modules/array'
 
-export interface IGetBaseOptions {
-  readonly onConfig?: (x: {
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    readonly config: ReturnType<typeof getBase>
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    readonly defaults: typeof defaults
-    readonly merge: typeof merge
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-  }) => ReturnType<typeof getBase>
-  readonly [x: string]: any
-}
-
 const defaults = {
   'import/no-extraneous-dependencies': {
     devDependencies: [
@@ -43,7 +31,7 @@ export const getBase = ({ onConfig, packageDirs, pathFileTSConfig, ...rest }: IG
           impliedStrict: true,
           modules: true,
         },
-        ecmaVersion: 2019,
+        ecmaVersion: 2020,
         project: pathFileTSConfig,
         sourceType: 'module',
       },
@@ -66,7 +54,10 @@ export const getBase = ({ onConfig, packageDirs, pathFileTSConfig, ...rest }: IG
           },
         ],
         'import/no-unresolved': 'error',
+        'import/extensions': 'off',
         'import/prefer-default-export': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/indent': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/explicit-function-return-type': 'off',
@@ -78,7 +69,6 @@ export const getBase = ({ onConfig, packageDirs, pathFileTSConfig, ...rest }: IG
             ignoreRestSiblings: false,
           },
         ],
-        '@typescript-eslint/interface-name-prefix': ['error', 'always'],
       },
     },
     rest
@@ -86,19 +76,16 @@ export const getBase = ({ onConfig, packageDirs, pathFileTSConfig, ...rest }: IG
 
   const hasReactConfig = results.extends.includes('airbnb')
 
-  results.extends = results.extends.reduce(
-    (acc, x) => {
-      // do not add base config if react config detected, since it already includes it in itself
-      if (hasReactConfig && x === 'airbnb-base') {
-        return acc
-      }
-
-      acc.push(x)
-
+  results.extends = results.extends.reduce((acc, x) => {
+    // do not add base config if react config detected, since it already includes it in itself
+    if (hasReactConfig && x === 'airbnb-base') {
       return acc
-    },
-    [] as string[]
-  )
+    }
+
+    acc.push(x)
+
+    return acc
+  }, [] as string[])
 
   if (typeof onConfig === 'function') {
     // this is just to let typescript infer the type
@@ -108,4 +95,16 @@ export const getBase = ({ onConfig, packageDirs, pathFileTSConfig, ...rest }: IG
   }
 
   return results
+}
+
+export interface IGetBaseOptions {
+  readonly onConfig?: (x: {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    readonly config: ReturnType<typeof getBase>
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    readonly defaults: typeof defaults
+    readonly merge: typeof merge
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  }) => ReturnType<typeof getBase>
+  readonly [x: string]: any
 }

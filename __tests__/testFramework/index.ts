@@ -52,7 +52,7 @@ export class TestFramework<TComponent = any> {
   public static utils = {
     Puppeteer,
     lodash,
-    mockConsole,
+    mockConsole: mockConsole.default,
     // eslint-disable-next-line global-require
     mockFS: require('mock-fs'),
 
@@ -65,7 +65,7 @@ export class TestFramework<TComponent = any> {
 
   public TargetComponent: TComponent
 
-  public moduleBasePath: string
+  public moduleBasePath?: string
 
   public moduleKey?: string
 
@@ -78,7 +78,7 @@ export class TestFramework<TComponent = any> {
     modulePath,
   }: {
     readonly TargetComponent?: TComponent
-    readonly moduleBasePath: string
+    readonly moduleBasePath?: string
     readonly moduleKey?: string
     readonly modulePath: string
   }) {
@@ -100,7 +100,7 @@ export class TestFramework<TComponent = any> {
         throw new Error('Cannot get a new module without path.')
       }
 
-      const baseModule = require.requireActual(path)
+      const baseModule = jest.requireActual(path)
 
       if (!baseModule || !key) {
         return baseModule
@@ -135,12 +135,12 @@ export class TestFramework<TComponent = any> {
         ...obj.__mockOptions,
       }
 
-      Object.keys(lodash.omit(obj, extraOptionsKeys)).forEach(theModulePath => {
+      Object.keys(lodash.omit(obj, extraOptionsKeys)).forEach((theModulePath) => {
         const theObjectValue = obj[theModulePath]
         const value = lodash.isObject(theObjectValue) ? lodash.omit(theObjectValue, extraOptionsKeys) : theObjectValue
-        const pathIsRelative = ['..', './'].some(x => theModulePath.startsWith(x))
+        const pathIsRelative = ['..', './'].some((x) => theModulePath.startsWith(x))
 
-        const requirePath = pathIsRelative ? join(this.moduleBasePath, theModulePath) : theModulePath
+        const requirePath = pathIsRelative ? join(this.moduleBasePath || '', theModulePath) : theModulePath
 
         jest.doMock(requirePath, () => {
           if (lodash.isObject(value)) {
@@ -158,7 +158,7 @@ export class TestFramework<TComponent = any> {
               }
             }
 
-            const originalModule = moduleOptions.mergeOriginalModule ? require.requireActual(requirePath) : {}
+            const originalModule = moduleOptions.mergeOriginalModule ? jest.requireActual(requirePath) : {}
             const isOriginalModuleAFunction = typeof originalModule === 'function'
             const mockHasDefaultPropertyAsFunction = value && typeof (value as any).default === 'function'
 

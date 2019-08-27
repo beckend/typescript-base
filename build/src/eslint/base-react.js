@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getBaseReact = void 0;
 const base_1 = require("./base");
 const array_1 = require("../modules/array");
 exports.getBaseReact = ({ packageDirs, pathFileTSConfig, ...rest } = {}) => base_1.getBase({

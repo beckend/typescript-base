@@ -14,10 +14,12 @@ import { Configuration } from '../configuration'
     }
 
     const { installFns } = Install
+    const typescriptBaseRC = await Install.getters.typescriptBaseRC()
 
     await Promise.all(
       [
         installFns.commitlint,
+        installFns.editorconfig,
         installFns.eslint,
         installFns.git,
         installFns.husky,
@@ -27,7 +29,7 @@ import { Configuration } from '../configuration'
         installFns.prettier,
         installFns.typescript,
         installFns.vscode,
-      ].map(x => x())
+      ].map((x) => x({ typescriptBaseRC }))
     )
   } catch (err) {
     Install.utils.logger.error(err)

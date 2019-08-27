@@ -1,5 +1,7 @@
 import { TestFramework } from '__tests__/testFramework'
 
+import { Install } from '..'
+
 describe('install', () => {
   const tf = new TestFramework<undefined>({
     moduleBasePath: __dirname,
@@ -136,8 +138,13 @@ describe('install', () => {
               },
             },
 
+            getters: {
+              typescriptBaseRC: () => Install.defaults.baseRC,
+            },
+
             installFns: [
               'commitlint',
+              'editorconfig',
               'eslint',
               'git',
               'husky',
@@ -147,18 +154,21 @@ describe('install', () => {
               'prettier',
               'typescript',
               'vscode',
-            ].reduce(
-              (acc, name) => {
-                acc[name] = jest
-                  .fn<Promise<undefined>, undefined[]>()
-                  .mockImplementationOnce(() =>
-                    TestFramework.getters.deferredPromise<undefined>(({ resolve }) => resolve(undefined))
-                  )
+            ].reduce((acc, name) => {
+              acc[name] = jest
+                .fn<Promise<undefined>, undefined[]>()
+                .mockImplementationOnce(() =>
+                  TestFramework.getters.deferredPromise<undefined>(({ resolve }) => resolve(undefined))
+                )
 
-                return acc
+              return acc
+            }, {} as { [x: string]: jest.Mock<Promise<undefined>, undefined[]> }),
+
+            utils: {
+              logger: {
+                error: jest.fn(),
               },
-              {} as { [x: string]: jest.Mock<Promise<undefined>, undefined[]> }
-            ),
+            },
           },
         },
       })
@@ -166,8 +176,10 @@ describe('install', () => {
       // waiting for the module to do the work by queuing another nextTick
       await TestFramework.getters.deferredPromise<undefined>(({ resolve }) => resolve(undefined))
 
-      Object.values(input['../index'].Install.installFns).forEach(mockFn => {
-        TestFramework.utils.expectWithCalledTimes(mockFn, 1).toHaveBeenCalledWith()
+      Object.values(input['../index'].Install.installFns).forEach((mockFn) => {
+        TestFramework.utils
+          .expectWithCalledTimes(mockFn, 1)
+          .toHaveBeenCalledWith({ typescriptBaseRC: Install.defaults.baseRC })
       })
     })
   })

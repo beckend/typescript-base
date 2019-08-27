@@ -3,10 +3,9 @@ import * as qs from 'querystring'
 export class Puppeteer {
   public baseImageURL: string
 
-
-  public constructor({ 
+  public constructor({
     // defaults to storybook example
-    baseImageURL = 'http://localhost:9009/iframe.html' 
+    baseImageURL = 'http://localhost:9009/iframe.html',
   }: { readonly baseImageURL?: string } = {}) {
     this.baseImageURL = baseImageURL
   }

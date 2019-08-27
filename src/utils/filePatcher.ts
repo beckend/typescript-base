@@ -1,9 +1,7 @@
+import { EOL } from 'os'
+import { logger } from 'just-task'
 import * as fsExtra from 'fs-extra'
 import * as path from 'path'
-import { EOL } from 'os'
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { logger } = require('just-task')
 
 export type TPatchFileOnFile = (x: {
   readonly content: Buffer
@@ -25,6 +23,28 @@ export class FilePatcher {
     logger,
     path,
 
+    addWhenNotExist({
+      addEOL = true,
+      content,
+      contentAdded,
+    }: {
+      readonly addEOL?: boolean
+      readonly contentAdded: string
+      readonly content: string | Buffer
+    }) {
+      const contentStr = FilePatcher.utils.getString({ content })
+
+      if (contentStr.indexOf(contentAdded) === -1) {
+        return contentAdded + (addEOL ? EOL : '') + contentStr
+      }
+
+      return contentStr
+    },
+
+    getString({ content }: { readonly content: string | Buffer }) {
+      return content instanceof Buffer ? content.toString() : content
+    },
+
     patchStringContent({
       content,
       stringMatch,
@@ -34,7 +54,7 @@ export class FilePatcher {
       readonly stringMatch: string
       readonly stringReplace: string
     }) {
-      const contentStr = content instanceof Buffer ? content.toString() : content
+      const contentStr = FilePatcher.utils.getString({ content })
 
       return contentStr.indexOf(stringMatch) === -1 ? contentStr : contentStr.replace(stringMatch, stringReplace)
     },
@@ -78,5 +98,5 @@ export class FilePatcher {
   }
 
   public patchFiles = ({ patchList }: { readonly patchList: IPatchFileOptions[] }) =>
-    Promise.all(patchList.map(x => this.patchFile(x)))
+    Promise.all(patchList.map((x) => this.patchFile(x)))
 }

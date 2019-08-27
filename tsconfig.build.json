@@ -1,4 +1,11 @@
 {
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "incremental": true,
+    "noEmitOnError": false,
+    "outDir": "./build",
+    "sourceMap": false
+  },
   "exclude": ["./src/**/__mocks__/**", "./src/**/__tests__/**", "./build**/**/*"],
   "extends": "./tsconfig"
 }

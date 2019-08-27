@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getBaseIntegration = void 0;
 const path_1 = require("path");
 const config_1 = require("../config");
 const base_1 = require("./base");

@@ -10,6 +10,16 @@ Array [
 ]
 `;
 
+exports[`Install statics installFns editorconfig 1`] = `
+Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/src/install/files/.editorconfig",
+    "pathFileWrite": "/root/.editorconfig",
+  },
+]
+`;
+
 exports[`Install statics installFns eslint 1`] = `
 Array [
   Object {
@@ -97,6 +107,11 @@ Array [
 
 exports[`Install statics installFns vscode 1`] = `
 Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/.vscode/extensions.json",
+    "pathFileWrite": "/root/.vscode/extensions.json",
+  },
   Object {
     "overwrite": true,
     "pathFileInput": "/root/.vscode/settings.json",

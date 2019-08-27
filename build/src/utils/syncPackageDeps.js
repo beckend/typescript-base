@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.syncPackageDeps = void 0;
 const fs_extra_1 = require("fs-extra");
 const os_1 = require("os");
 exports.syncPackageDeps = async ({ pathPackageSource, pathPackageSyncTo, }) => {
@@ -11,7 +12,7 @@ exports.syncPackageDeps = async ({ pathPackageSource, pathPackageSyncTo, }) => {
         const newDependencies = {
             ...packageSyncTo.dependencies,
         };
-        Object.keys(packageSyncTo.dependencies).forEach(k => {
+        Object.keys(packageSyncTo.dependencies).forEach((k) => {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const versionPJSON = packageSource.dependencies[k];
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

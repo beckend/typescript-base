@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FilePatcher = void 0;
+const os_1 = require("os");
+const just_task_1 = require("just-task");
 const fsExtra = require("fs-extra");
 const path = require("path");
-const os_1 = require("os");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { logger } = require('just-task');
 class FilePatcher {
     constructor({ logPrefix }) {
         this.patchFile = async ({ onFile, pathFileInput, pathFileOutput }) => {
@@ -16,34 +16,44 @@ class FilePatcher {
                 const contentStrReturned = returned.newContent instanceof Buffer ? returned.newContent.toString() : returned.newContent;
                 if (contentStr !== contentStrReturned) {
                     await fsExtra.writeFile(pathFileWrite, returned.newContent);
-                    logger.info(`"${this.logPrefix}" - wrote file "${pathFileWrite}" successfully.`);
+                    just_task_1.logger.info(`"${this.logPrefix}" - wrote file "${pathFileWrite}" successfully.`);
                     return {
                         wroteFile: true,
                     };
                 }
-                logger.warn(`"${this.logPrefix}" - Content was not changed, not writing to "${pathFileWrite}".`);
+                just_task_1.logger.warn(`"${this.logPrefix}" - Content was not changed, not writing to "${pathFileWrite}".`);
             }
             else {
-                logger.warn(`"${this.logPrefix}" - Nothing returned from onFile callback.`);
+                just_task_1.logger.warn(`"${this.logPrefix}" - Nothing returned from onFile callback.`);
             }
             return {
                 wroteFile: false,
             };
         };
-        this.patchFiles = ({ patchList }) => Promise.all(patchList.map(x => this.patchFile(x)));
+        this.patchFiles = ({ patchList }) => Promise.all(patchList.map((x) => this.patchFile(x)));
         this.logPrefix = logPrefix;
     }
 }
+exports.FilePatcher = FilePatcher;
 FilePatcher.constants = {
     EOL: os_1.EOL,
 };
 FilePatcher.utils = {
     fsExtra,
-    logger,
+    logger: just_task_1.logger,
     path,
+    addWhenNotExist({ addEOL = true, content, contentAdded, }) {
+        const contentStr = FilePatcher.utils.getString({ content });
+        if (contentStr.indexOf(contentAdded) === -1) {
+            return contentAdded + (addEOL ? os_1.EOL : '') + contentStr;
+        }
+        return contentStr;
+    },
+    getString({ content }) {
+        return content instanceof Buffer ? content.toString() : content;
+    },
     patchStringContent({ content, stringMatch, stringReplace, }) {
-        const contentStr = content instanceof Buffer ? content.toString() : content;
+        const contentStr = FilePatcher.utils.getString({ content });
         return contentStr.indexOf(stringMatch) === -1 ? contentStr : contentStr.replace(stringMatch, stringReplace);
     },
 };
-exports.FilePatcher = FilePatcher;

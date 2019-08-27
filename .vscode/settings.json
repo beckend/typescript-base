@@ -8,25 +8,6 @@
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.formatOnSave": true,
-  "eslint.validate": [
-    {
-      "language": "javascript",
-      "autoFix": true
-    },
-    {
-      "language": "javascriptreact",
-      "autoFix": true
-    },
-    {
-      "language": "typescript",
-      "autoFix": true
-    },
-    {
-      "language": "typescriptreact",
-      "autoFix": true
-    }
-  ],
-  "eslint.autoFixOnSave": true,
   "eslint.alwaysShowStatus": true,
   "eslint.packageManager": "npm",
   "[javascript]": {
@@ -41,6 +22,9 @@
   "[typescriptreact]": {
     "editor.formatOnSave": false
   },
-  "eslint.provideLintTask": true,
-  "prettier.disableLanguages": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
+  "eslint.lintTask.enable": true,
+  "prettier.disableLanguages": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }

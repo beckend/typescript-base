@@ -34,7 +34,7 @@ package.json
 
 ```javascript
 // accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').husky.getBase({
+module.exports = require('@linkening/typescript-base').husky.getBase({
   customOverride: true,
 })
 ```
@@ -59,7 +59,7 @@ commitlint.config.js
 
 ```javascript
 // accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').commitlint.getBase({
+module.exports = require('@linkening/typescript-base').commitlint.getBase({
   customOverride: true,
 })
 ```
@@ -79,7 +79,7 @@ module.exports = require('typescript-base').commitlint.getBase({
 ```javascript
 const {
   eslint: { getBase, getBaseReact },
-} = require('typescript-base')
+} = require('@linkening/typescript-base')
 ```
 
 ```
@@ -194,7 +194,7 @@ Preferred
 
 ```json
 {
-  "extends": "./node_modules/typescript-base/tsconfig.base.declaration.json"
+  "extends": "./node_modules/@linkening/typescript-base/tsconfig.base.declaration.json"
 }
 ```
 
@@ -202,7 +202,7 @@ Or this config if project does not support declaration due to conflict
 
 ```json
 {
-  "extends": "./node_modules/typescript-base/tsconfig.base.json"
+  "extends": "./node_modules/@linkening/typescript-base/tsconfig.base.json"
 }
 ```
 
@@ -222,7 +222,7 @@ Or this config if project does not support declaration due to conflict
 
 ```javascript
 // accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').prettier.getBase({
+module.exports = require('@linkening/typescript-base').prettier.getBase({
   customOverride: true,
 })
 ```
@@ -251,7 +251,7 @@ npm i -D stylelint stylelint-config-recommended
 
 ```javascript
 // accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').stylelint.getBase({
+module.exports = require('@linkening/typescript-base').stylelint.getBase({
   customOverride: true,
 })
 ```
@@ -284,7 +284,7 @@ jest.config.js
 const DIR_ROOT = __dirname
 
 // accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').jest.getBase({
+module.exports = require('@linkening/typescript-base').jest.getBase({
   rootDir: DIR_ROOT,
   testEnvironment: 'node',
 })
@@ -306,7 +306,7 @@ npm i -D @types/jest-image-snapshot @testing-library/jest-dom jest-environment-j
 const DIR_ROOT = __dirname
 
 // accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').jest.getBase({
+module.exports = require('@linkening/typescript-base').jest.getBase({
   isReact: true,
   rootDir: DIR_ROOT,
   testEnvironment: 'jest-environment-jsdom-global',
@@ -333,7 +333,27 @@ jest.integration.config.js
 const DIR_ROOT = __dirname
 
 // accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').jest.getBaseIntegration({
+module.exports = require('@linkening/typescript-base').jest.getBaseIntegration({
   rootDir: DIR_ROOT,
 })
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+### typescriptbaserc.js - place it in root directory, all options are optional
+
+```javascript
+module.exports = {
+  filesToCopy: {
+    exclude: [
+      // excludes this files from being copied
+      'jest.config.js',
+    ],
+  },
+
+  // modify package.json scripts etc...
+  modifyPackageJSON: false,
+}
 ```

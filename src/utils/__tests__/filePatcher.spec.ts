@@ -21,30 +21,94 @@ describe('utils', () => {
   describe(TargetModule.name, () => {
     describe('statics', () => {
       describe('utils', () => {
-        describe('patchStringContent', () => {
-          const targetName: keyof typeof TargetModule.utils = 'patchStringContent'
+        describe('getString', () => {
+          const targetName: keyof typeof TargetModule.utils = 'getString'
 
-          describe('buffer', () => {
-            it('string match and replace', () => {
+          it('string', () => {
+            expect(
+              TargetModule.utils[targetName]({
+                content: '1234',
+              })
+            ).toEqual('1234')
+          })
+
+          it('buffer', () => {
+            expect(
+              TargetModule.utils[targetName]({
+                content: Buffer.from('1234'),
+              })
+            ).toEqual('1234')
+          })
+        })
+
+        describe('addWhenNotExist', () => {
+          const targetName: keyof typeof TargetModule.utils = 'addWhenNotExist'
+
+          describe('string', () => {
+            it('added when not exist', () => {
               expect(
                 TargetModule.utils[targetName]({
-                  content: Buffer.from('1234'),
-                  stringMatch: '12',
-                  stringReplace: '33',
+                  content: '1234',
+                  contentAdded: 'hello',
                 })
-              ).toEqual('3334')
+              ).toMatchInlineSnapshot(`
+                "hello
+                1234"
+              `)
             })
 
-            it('no match', () => {
+            it('exist and not added', () => {
               expect(
                 TargetModule.utils[targetName]({
-                  content: Buffer.from('1234'),
-                  stringMatch: '432432',
-                  stringReplace: '33',
+                  content: '1234',
+                  contentAdded: '1234',
                 })
               ).toEqual('1234')
             })
+
+            describe('options', () => {
+              describe('addEOL', () => {
+                it('not passed', () => {
+                  expect(
+                    TargetModule.utils[targetName]({
+                      content: '1234',
+                      contentAdded: 'hello',
+                    })
+                  ).toMatchInlineSnapshot(`
+                    "hello
+                    1234"
+                  `)
+                })
+
+                it('true', () => {
+                  expect(
+                    TargetModule.utils[targetName]({
+                      addEOL: true,
+                      content: '1234',
+                      contentAdded: 'hello',
+                    })
+                  ).toMatchInlineSnapshot(`
+                    "hello
+                    1234"
+                  `)
+                })
+
+                it('false', () => {
+                  expect(
+                    TargetModule.utils[targetName]({
+                      addEOL: false,
+                      content: '1234',
+                      contentAdded: 'hello',
+                    })
+                  ).toMatchInlineSnapshot(`"hello1234"`)
+                })
+              })
+            })
           })
+        })
+
+        describe('patchStringContent', () => {
+          const targetName: keyof typeof TargetModule.utils = 'patchStringContent'
 
           describe('string', () => {
             it('string match and replace', () => {
@@ -200,10 +264,10 @@ describe('utils', () => {
               ],
             })
           ).resolves.toMatchInlineSnapshot(`
-            Array [
-              undefined,
-            ]
-          `)
+                                Array [
+                                  undefined,
+                                ]
+                            `)
         })
       })
     })

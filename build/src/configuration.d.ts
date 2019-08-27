@@ -3,37 +3,37 @@ interface IConfigurationOptions {
 }
 export declare class Configuration {
     static packageJSON: {
-        "name": string;
-        "version": string;
-        "description": string;
-        "engines": {
-            "node": string;
+        name: string;
+        version: string;
+        description: string;
+        engines: {
+            node: string;
         };
-        "scripts": {
-            "build": string;
-            "ci": string;
-            "commit": string;
-            "lint": string;
+        scripts: {
+            build: string;
+            ci: string;
+            commit: string;
+            lint: string;
             "patch:files": string;
-            "postinstall": string;
+            postinstall: string;
             "prepare-release": string;
-            "release": string;
+            release: string;
             "jest:integration": string;
             "test:coverage": string;
             "test:watch-coverage": string;
             "test:watch": string;
-            "test": string;
+            test: string;
         };
-        "main": string;
-        "keywords": never[];
-        "author": string;
-        "license": string;
-        "config": {
-            "commitizen": {
-                "path": string;
+        main: string;
+        keywords: never[];
+        author: string;
+        license: string;
+        config: {
+            commitizen: {
+                path: string;
             };
         };
-        "dependencies": {
+        dependencies: {
             "@commitlint/cli": string;
             "@commitlint/config-conventional": string;
             "@types/eslint": string;
@@ -44,9 +44,9 @@ export declare class Configuration {
             "@typescript-eslint/eslint-plugin": string;
             "@typescript-eslint/parser": string;
             "app-root-path": string;
-            "concurrently": string;
+            concurrently: string;
             "cz-conventional-changelog": string;
-            "eslint": string;
+            eslint: string;
             "eslint-config-airbnb-base": string;
             "eslint-config-prettier": string;
             "eslint-import-resolver-typescript": string;
@@ -55,20 +55,20 @@ export declare class Configuration {
             "eslint-plugin-prettier": string;
             "fs-extra": string;
             "git-cz": string;
-            "husky": string;
-            "jest": string;
+            husky: string;
+            jest: string;
             "jest-config": string;
             "jest-mock-console": string;
             "just-task": string;
-            "lodash": string;
+            lodash: string;
             "mock-fs": string;
-            "prettier": string;
-            "promisepipe": string;
+            prettier: string;
+            promisepipe: string;
             "standard-version": string;
             "ts-jest": string;
-            "tslib": string;
+            tslib: string;
         };
-        "devDependencies": {
+        devDependencies: {
             "@schemastore/package": string;
             "@testing-library/jest-dom": string;
             "@testing-library/react": string;
@@ -79,6 +79,8 @@ export declare class Configuration {
             "@types/puppeteer": string;
             "@types/react": string;
             "@types/react-dom": string;
+            "@types/undertaker": string;
+            "@types/yargs": string;
             "eslint-config-airbnb": string;
             "eslint-plugin-react": string;
             "eslint-plugin-react-hooks": string;
@@ -86,15 +88,15 @@ export declare class Configuration {
             "jest-environment-jsdom-global": string;
             "jest-image-snapshot": string;
             "jest-puppeteer": string;
-            "puppeteer": string;
-            "react": string;
+            puppeteer: string;
+            react: string;
             "react-dom": string;
-            "stylelint": string;
+            stylelint: string;
             "stylelint-config-recommended": string;
             "ts-node": string;
-            "typescript": string;
+            typescript: string;
         };
-        "peerDependencies": {
+        peerDependencies: {
             "@testing-library/jest-dom": string;
             "@testing-library/react": string;
             "@types/expect-puppeteer": string;
@@ -110,12 +112,12 @@ export declare class Configuration {
             "jest-environment-jsdom-global": string;
             "jest-image-snapshot": string;
             "jest-puppeteer": string;
-            "puppeteer": string;
-            "react": string;
+            puppeteer: string;
+            react: string;
             "react-dom": string;
-            "stylelint": string;
+            stylelint: string;
             "stylelint-config-recommended": string;
-            "typescript": string;
+            typescript: string;
         };
     };
     static isBuild: boolean;

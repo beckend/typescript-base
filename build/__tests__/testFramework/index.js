@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TestFramework = void 0;
 const path_1 = require("path");
 const lodash = require("lodash");
 const mockConsole = require("jest-mock-console");
@@ -11,7 +12,7 @@ class TestFramework {
                 if (!path) {
                     throw new Error('Cannot get a new module without path.');
                 }
-                const baseModule = require.requireActual(path);
+                const baseModule = jest.requireActual(path);
                 if (!baseModule || !key) {
                     return baseModule;
                 }
@@ -26,11 +27,11 @@ class TestFramework {
                     // eslint-disable-next-line no-underscore-dangle
                     ...obj.__mockOptions,
                 };
-                Object.keys(lodash.omit(obj, extraOptionsKeys)).forEach(theModulePath => {
+                Object.keys(lodash.omit(obj, extraOptionsKeys)).forEach((theModulePath) => {
                     const theObjectValue = obj[theModulePath];
                     const value = lodash.isObject(theObjectValue) ? lodash.omit(theObjectValue, extraOptionsKeys) : theObjectValue;
-                    const pathIsRelative = ['..', './'].some(x => theModulePath.startsWith(x));
-                    const requirePath = pathIsRelative ? path_1.join(this.moduleBasePath, theModulePath) : theModulePath;
+                    const pathIsRelative = ['..', './'].some((x) => theModulePath.startsWith(x));
+                    const requirePath = pathIsRelative ? path_1.join(this.moduleBasePath || '', theModulePath) : theModulePath;
                     jest.doMock(requirePath, () => {
                         if (lodash.isObject(value)) {
                             // user overrideable per module
@@ -45,7 +46,7 @@ class TestFramework {
                                     ...value,
                                 };
                             }
-                            const originalModule = moduleOptions.mergeOriginalModule ? require.requireActual(requirePath) : {};
+                            const originalModule = moduleOptions.mergeOriginalModule ? jest.requireActual(requirePath) : {};
                             const isOriginalModuleAFunction = typeof originalModule === 'function';
                             const mockHasDefaultPropertyAsFunction = value && typeof value.default === 'function';
                             if (!lodash.isObject(originalModule)) {
@@ -91,6 +92,7 @@ class TestFramework {
         this.modulePath = modulePath;
     }
 }
+exports.TestFramework = TestFramework;
 TestFramework.DUMMY_VALUES = Object.freeze({
     BOOL_FALSE: false,
     BOOL_TRUE: true,
@@ -123,7 +125,7 @@ TestFramework.setup = {
 TestFramework.utils = {
     Puppeteer: puppeteer_1.Puppeteer,
     lodash,
-    mockConsole,
+    mockConsole: mockConsole.default,
     // eslint-disable-next-line global-require
     mockFS: require('mock-fs'),
     expectWithCalledTimes(spy, times = 1) {
@@ -131,4 +133,3 @@ TestFramework.utils = {
         return expect(spy);
     },
 };
-exports.TestFramework = TestFramework;
