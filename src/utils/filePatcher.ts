@@ -1,9 +1,7 @@
+import { EOL } from 'os'
+import { logger } from 'just-task'
 import * as fsExtra from 'fs-extra'
 import * as path from 'path'
-import { EOL } from 'os'
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { logger } = require('just-task')
 
 export type TPatchFileOnFile = (x: {
   readonly content: Buffer
@@ -16,14 +14,36 @@ export interface IPatchFileOptions {
 }
 
 export class FilePatcher {
-  public static constants = {
+  static constants = {
     EOL,
   }
 
-  public static utils = {
+  static utils = {
     fsExtra,
     logger,
     path,
+
+    addWhenNotExist({
+      addEOL = true,
+      content,
+      contentAdded,
+    }: {
+      readonly addEOL?: boolean
+      readonly contentAdded: string
+      readonly content: string | Buffer
+    }) {
+      const contentStr = FilePatcher.utils.getString({ content })
+
+      if (contentStr.indexOf(contentAdded) === -1) {
+        return contentAdded + (addEOL ? EOL : '') + contentStr
+      }
+
+      return contentStr
+    },
+
+    getString({ content }: { readonly content: string | Buffer }) {
+      return content instanceof Buffer ? content.toString() : content
+    },
 
     patchStringContent({
       content,
@@ -34,19 +54,19 @@ export class FilePatcher {
       readonly stringMatch: string
       readonly stringReplace: string
     }) {
-      const contentStr = content instanceof Buffer ? content.toString() : content
+      const contentStr = FilePatcher.utils.getString({ content })
 
       return contentStr.indexOf(stringMatch) === -1 ? contentStr : contentStr.replace(stringMatch, stringReplace)
     },
   }
 
-  public logPrefix: string
+  logPrefix: string
 
-  public constructor({ logPrefix }: { readonly logPrefix: string }) {
+  constructor({ logPrefix }: { readonly logPrefix: string }) {
     this.logPrefix = logPrefix
   }
 
-  public patchFile = async ({ onFile, pathFileInput, pathFileOutput }: IPatchFileOptions) => {
+  patchFile = async ({ onFile, pathFileInput, pathFileOutput }: IPatchFileOptions) => {
     const content = await fsExtra.readFile(pathFileInput)
     const pathFileWrite = pathFileOutput || pathFileInput
 
@@ -77,6 +97,6 @@ export class FilePatcher {
     }
   }
 
-  public patchFiles = ({ patchList }: { readonly patchList: IPatchFileOptions[] }) =>
-    Promise.all(patchList.map(x => this.patchFile(x)))
+  patchFiles = ({ patchList }: { readonly patchList: IPatchFileOptions[] }) =>
+    Promise.all(patchList.map((x) => this.patchFile(x)))
 }

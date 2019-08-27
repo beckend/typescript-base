@@ -1,5 +1,6 @@
 import { merge } from 'lodash'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getBase = (options: { readonly [x: string]: any } = {}) =>
   merge(
     {

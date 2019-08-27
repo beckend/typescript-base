@@ -4,13 +4,12 @@ import { returnArray } from '../modules/array'
 
 export interface IGetBaseOptions {
   readonly onConfig?: (x: {
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     readonly config: ReturnType<typeof getBase>
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     readonly defaults: typeof defaults
     readonly merge: typeof merge
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
   }) => ReturnType<typeof getBase>
+  readonly isReact?: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly [x: string]: any
 }
 
@@ -32,32 +31,35 @@ const defaults = {
   },
 }
 
-export const getBase = ({ onConfig, packageDirs, pathFileTSConfig, ...rest }: IGetBaseOptions = {}) => {
+export const getBase = ({ onConfig, isReact, packageDirs, pathFileTSConfig, ...rest }: IGetBaseOptions = {}) => {
   const results = merge(
     {
-      extends: ['airbnb-base', 'plugin:@typescript-eslint/recommended', 'prettier', 'prettier/@typescript-eslint'],
-      parser: '@typescript-eslint/parser',
+      root: true,
+      extends: [
+        `airbnb-typescript${isReact ? '' : '/base'}`,
+        'plugin:import/errors',
+        'plugin:import/warnings',
+        'plugin:import/typescript',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:@typescript-eslint/recommended-requiring-type-checking',
+        'prettier',
+      ],
       parserOptions: {
-        createDefaultProgram: true,
-        ecmaFeatures: {
-          impliedStrict: true,
-          modules: true,
-        },
-        ecmaVersion: 2019,
+        extraFileExtensions: ['.mjs'],
         project: pathFileTSConfig,
-        sourceType: 'module',
       },
-      plugins: ['import', '@typescript-eslint', 'prettier'],
       settings: {
+        'import/parsers': {
+          '@typescript-eslint/parser': ['.ts', '.tsx', '.js', '.jsx'],
+        },
         'import/resolver': {
           typescript: {
-            directory: pathFileTSConfig,
+            alwaysTryTypes: true,
+            project: [pathFileTSConfig],
           },
         },
       },
       rules: {
-        'jsx-a11y/control-has-associated-label': 'off',
-        'prettier/prettier': 'error',
         'import/no-extraneous-dependencies': [
           'error',
           {
@@ -65,39 +67,24 @@ export const getBase = ({ onConfig, packageDirs, pathFileTSConfig, ...rest }: IG
             packageDir: [...returnArray(packageDirs)],
           },
         ],
-        'import/no-unresolved': 'error',
-        'import/prefer-default-export': 'off',
-        '@typescript-eslint/indent': 'off',
-        '@typescript-eslint/no-explicit-any': 'off',
-        '@typescript-eslint/explicit-function-return-type': 'off',
-        '@typescript-eslint/no-unused-vars': [
+        '@typescript-eslint/no-floating-promises': [
           'error',
           {
-            vars: 'all',
-            args: 'after-used',
-            ignoreRestSiblings: false,
+            ignoreIIFE: true,
           },
         ],
-        '@typescript-eslint/interface-name-prefix': ['error', 'always'],
+        'no-plusplus': 'off',
+        '@typescript-eslint/unbound-method': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/no-var-requires': 'off',
+        '@typescript-eslint/no-unsafe-return': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        'import/prefer-default-export': 'off',
       },
     },
     rest
-  )
-
-  const hasReactConfig = results.extends.includes('airbnb')
-
-  results.extends = results.extends.reduce(
-    (acc, x) => {
-      // do not add base config if react config detected, since it already includes it in itself
-      if (hasReactConfig && x === 'airbnb-base') {
-        return acc
-      }
-
-      acc.push(x)
-
-      return acc
-    },
-    [] as string[]
   )
 
   if (typeof onConfig === 'function') {

@@ -1,13 +1,13 @@
 // https://jestjs.io/docs/en/configuration.html
+import type { InitialOptionsTsJest } from 'ts-jest/dist/types'
 import { join } from 'path'
-import { jestPreset as tsJestPreset } from 'ts-jest'
+import { defaults as tsJestPreset } from 'ts-jest/presets'
 import { pathsToModuleNameMapper } from 'ts-jest/utils'
 import { merge } from 'lodash'
+import * as jestConfig from 'jest-config'
 
-import config from '../config'
+import configuration from '../config'
 import { returnArray } from '../modules/array'
-
-const jestDefaults = require('jest-config').defaults
 
 export interface IGetBaseOptions {
   readonly TSConfig?: {
@@ -22,6 +22,7 @@ export interface IGetBaseOptions {
 
   readonly moduleDirectories?: string[]
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly onConfig?: (x: { readonly config: any }) => any
   readonly preset?: string
   readonly rootDir: string
@@ -29,6 +30,7 @@ export interface IGetBaseOptions {
   readonly setupFilesAfterEnv?: string[]
   readonly testEnvironment?: string
   readonly withDefaultSetupFilesAfterEnv?: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly [x: string]: any
 }
 
@@ -40,33 +42,32 @@ export const getBase = ({
   rootDir,
   roots,
   setupFilesAfterEnv: setupFilesAfterEnvInput,
-  testEnvironment = 'jest-environment-jsdom-global',
+  testEnvironment = 'jest-environment-jsdom',
   TSConfig,
   withDefaultSetupFilesAfterEnv = true,
   ...rest
-}: IGetBaseOptions) => {
+}: IGetBaseOptions): InitialOptionsTsJest => {
   const isPuppeteer = rest.preset === 'jest-puppeteer'
 
   const moduleNameMapper = {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': join(
-      config.PATH.DIR.ROOT_BUILD,
+      configuration.PATH.DIR.ROOT_BUILD,
       '__mocks__/fileMock.js'
     ),
-    '\\.(css|less)$': join(config.PATH.DIR.ROOT_BUILD, '__mocks__/styleMock.js'),
+    '\\.(css|less)$': join(configuration.PATH.DIR.ROOT_BUILD, '__mocks__/styleMock.js'),
   }
 
   const setupFilesAfterEnv: string[] = [
     ...returnArray(
       withDefaultSetupFilesAfterEnv &&
         [
-          'jest-mock-console/dist/setupTestFramework.js',
-          join(config.PATH.DIR.ROOT_BUILD, '__tests__/setupTestFramework.js'),
+          join(configuration.PATH.DIR.ROOT_BUILD, '__tests__/setupTestFramework.js'),
 
           isReact &&
             testEnvironment.includes('jsdom') &&
-            join(config.PATH.DIR.ROOT_BUILD, '__tests__/setupTestFrameworkReact.js'),
+            join(configuration.PATH.DIR.ROOT_BUILD, '__tests__/setupTestFrameworkReact.js'),
 
-          isPuppeteer && join(config.PATH.DIR.ROOT_BUILD, '__tests__/setupTestFrameworkIntegration.js'),
+          isPuppeteer && join(configuration.PATH.DIR.ROOT_BUILD, '__tests__/setupTestFrameworkIntegration.js'),
         ].filter(Boolean)
     ),
     ...returnArray(setupFilesAfterEnvInput),
@@ -82,7 +83,7 @@ export const getBase = ({
     }
   }
 
-  const jestConfig = merge(
+  const config = merge(
     {
       // An array of glob patterns indicating a set of files for which coverage information should be collected. If a file matches the specified glob pattern, coverage information will be collected for it even if no tests exist for this file and it's never required in the test suite.
       collectCoverageFrom: ['**/*.{ts,tsx}', '!**/*.d.ts', '!**/__*__/**'],
@@ -96,7 +97,7 @@ export const getBase = ({
           statements: -10,
         },
       },
-      moduleDirectories: [...jestDefaults.moduleDirectories, ...returnArray(moduleDirectories)],
+      moduleDirectories: [...jestConfig.defaults.moduleDirectories, ...returnArray(moduleDirectories)],
       moduleNameMapper,
       modulePaths: ['<rootDir>'],
 
@@ -128,17 +129,31 @@ export const getBase = ({
       transform: {
         ...tsJestPreset.transform,
       },
-    },
+
+      // @TODO swc cannot compile this project
+      // transform: {
+      //   '^.+\\.(t|j)sx?$': [
+      //     '@swc-node/jest',
+
+      //     // https://github.com/Brooooooklyn/swc-node/blob/master/packages/core/index.ts#L9s
+      //     {
+      //       dynamicImport: true,
+      //       keepClassNames: true,
+      //       target: 'es2019',
+      //     },
+      //   ],
+      // },
+    } as InitialOptionsTsJest,
     rest
   )
 
   if (onConfig) {
-    let userConfig = jestConfig
+    let userConfig = config
 
-    userConfig = onConfig({ config: jestConfig })
+    userConfig = onConfig({ config })
 
     return userConfig
   }
 
-  return jestConfig
+  return config
 }

@@ -1,2 +1,2 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires, import/no-extraneous-dependencies
-module.exports = require('typescript-base').prettier.getBase()
+// eslint-disable-next-line import/no-extraneous-dependencies
+module.exports = require('@linkening/typescript-base').prettier.getBase()

@@ -41,10 +41,9 @@ describe('jest base config', () => {
         "rootDir": "/root",
         "roots": undefined,
         "setupFilesAfterEnv": Array [
-          "jest-mock-console/dist/setupTestFramework.js",
           "/root/build/__tests__/setupTestFramework.js",
         ],
-        "testEnvironment": "jest-environment-jsdom-global",
+        "testEnvironment": "jest-environment-jsdom",
         "testMatch": Array [
           "**/__tests__/**/*.spec.{ts,tsx}",
           "!**/__tests__/**/*.integration.spec.{ts,tsx}",
@@ -98,11 +97,10 @@ describe('jest base config', () => {
         "rootDir": "/root",
         "roots": undefined,
         "setupFilesAfterEnv": Array [
-          "jest-mock-console/dist/setupTestFramework.js",
           "/root/build/__tests__/setupTestFramework.js",
           "/root/build/__tests__/setupTestFrameworkReact.js",
         ],
-        "testEnvironment": "jest-environment-jsdom-global",
+        "testEnvironment": "jest-environment-jsdom",
         "testMatch": Array [
           "**/__tests__/**/*.spec.{ts,tsx}",
           "!**/__tests__/**/*.integration.spec.{ts,tsx}",
@@ -130,6 +128,7 @@ describe('jest base config', () => {
               },
             },
           },
+
           rootDir,
         }).moduleNameMapper
       ).toMatchInlineSnapshot(`
@@ -215,10 +214,9 @@ describe('jest base config', () => {
           "rootDir": "/root",
           "roots": undefined,
           "setupFilesAfterEnv": Array [
-            "jest-mock-console/dist/setupTestFramework.js",
             "/root/build/__tests__/setupTestFramework.js",
           ],
-          "testEnvironment": "jest-environment-jsdom-global",
+          "testEnvironment": "jest-environment-jsdom",
           "testMatch": Array [
             "**/__tests__/**/*.spec.{ts,tsx}",
             "!**/__tests__/**/*.integration.spec.{ts,tsx}",

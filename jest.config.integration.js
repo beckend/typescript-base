@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { coveragePathIgnorePatterns } = require('./jest.common')
 
 const DIR_ROOT = __dirname

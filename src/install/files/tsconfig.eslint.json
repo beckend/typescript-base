@@ -1,0 +1,4 @@
+{
+  "extends": "./node_modules/@linkening/typescript-base/tsconfig.base.json",
+  "include": ["**/.*.js", "**/.*.jsx", "**/*.js", "**/*.jsx", "**/.*.ts", "**/.*.tsx", "**/*.ts", "**/*.tsx"]
+}

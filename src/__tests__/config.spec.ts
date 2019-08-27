@@ -15,13 +15,15 @@ describe('config', () => {
 
   const getConfigurationClass = ({ isBuild, isTest }: { readonly isBuild: boolean; readonly isTest: boolean }) =>
     class MockConfiguration {
-      public static isBuild = isBuild
+      static isBuild = isBuild
 
-      public static isTest = isTest
+      static isTest = isTest
 
-      public testPayload: any = {}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      testPayload: any = {}
 
-      public constructor(opts: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(opts: any) {
         Object.assign(this.testPayload, opts)
       }
     }
@@ -39,6 +41,7 @@ describe('config', () => {
               },
             })
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             expect((NewModule as any).testPayload.pathRoot).toEqual(join(dirnameRelativeToTargetModule, '../..'))
           })
 
@@ -49,6 +52,7 @@ describe('config', () => {
               },
             })
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             expect((NewModule as any).testPayload.pathRoot).toEqual('/root')
           })
         })
@@ -65,6 +69,7 @@ describe('config', () => {
               },
             })
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             expect((NewModule as any).testPayload.pathRoot).toEqual(join(dirnameRelativeToTargetModule, '../..'))
           })
 
@@ -75,6 +80,7 @@ describe('config', () => {
               },
             })
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             expect((NewModule as any).testPayload.pathRoot).toEqual(join(dirnameRelativeToTargetModule, '..'))
           })
         })

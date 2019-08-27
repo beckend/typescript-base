@@ -1,11 +1,9 @@
 import { join } from 'path'
 import * as lodash from 'lodash'
-import * as mockConsole from 'jest-mock-console'
 
-import { Puppeteer } from './puppeteer'
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class TestFramework<TComponent = any> {
-  public static DUMMY_VALUES = Object.freeze({
+  static DUMMY_VALUES = Object.freeze({
     BOOL_FALSE: false,
     BOOL_TRUE: true,
     OBJECT_EMPTY: {},
@@ -22,7 +20,8 @@ export class TestFramework<TComponent = any> {
     FN_PASSTHROUGH: <T1>(x: T1) => x,
   })
 
-  public static getters = {
+  static getters = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     deferredPromise: <T1 = any>(
       cb: (x: {
         readonly resolve: (resValue: T1 | PromiseLike<T1> | undefined) => void
@@ -35,26 +34,13 @@ export class TestFramework<TComponent = any> {
       } = {}
     ) =>
       new Promise<T1>((resolve, reject) => {
-        lodash.defer(() => cb({ resolve, reject }), timeout)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        lodash.defer(() => cb({ resolve: resolve as any, reject }), timeout)
       }),
   }
 
-  public static setup = {
-    afterEach({ resetMockFS = true }: { readonly resetMockFS?: boolean } = {}) {
-      afterEach(() => {
-        if (resetMockFS) {
-          TestFramework.utils.mockFS.restore()
-        }
-      })
-    },
-  }
-
-  public static utils = {
-    Puppeteer,
+  static utils = {
     lodash,
-    mockConsole,
-    // eslint-disable-next-line global-require
-    mockFS: require('mock-fs'),
 
     expectWithCalledTimes<T1 extends jest.Mock>(spy: T1, times = 1) {
       expect(spy).toHaveBeenCalledTimes(times)
@@ -63,32 +49,33 @@ export class TestFramework<TComponent = any> {
     },
   }
 
-  public TargetComponent: TComponent
+  TargetComponent: TComponent
 
-  public moduleBasePath: string
+  moduleBasePath?: string
 
-  public moduleKey?: string
+  moduleKey?: string
 
-  public modulePath: string
+  modulePath: string
 
-  public constructor({
+  constructor({
     TargetComponent,
     moduleBasePath,
     moduleKey,
     modulePath,
   }: {
     readonly TargetComponent?: TComponent
-    readonly moduleBasePath: string
+    readonly moduleBasePath?: string
     readonly moduleKey?: string
     readonly modulePath: string
   }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.TargetComponent = TargetComponent as any
     this.moduleBasePath = moduleBasePath
     this.moduleKey = moduleKey
     this.modulePath = modulePath
   }
 
-  public getters = {
+  getters = {
     newModule: ({
       key = this.moduleKey,
       path = this.modulePath,
@@ -100,7 +87,7 @@ export class TestFramework<TComponent = any> {
         throw new Error('Cannot get a new module without path.')
       }
 
-      const baseModule = require.requireActual(path)
+      const baseModule = jest.requireActual(path)
 
       if (!baseModule || !key) {
         return baseModule
@@ -110,8 +97,9 @@ export class TestFramework<TComponent = any> {
     },
   }
 
-  public utils = {
+  utils = {
     doMock: <
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       TInput extends Record<string | number, any> & {
         readonly __mockOptions?: {
           readonly mergeOriginalModule?: boolean
@@ -135,12 +123,12 @@ export class TestFramework<TComponent = any> {
         ...obj.__mockOptions,
       }
 
-      Object.keys(lodash.omit(obj, extraOptionsKeys)).forEach(theModulePath => {
+      Object.keys(lodash.omit(obj, extraOptionsKeys)).forEach((theModulePath) => {
         const theObjectValue = obj[theModulePath]
         const value = lodash.isObject(theObjectValue) ? lodash.omit(theObjectValue, extraOptionsKeys) : theObjectValue
-        const pathIsRelative = ['..', './'].some(x => theModulePath.startsWith(x))
+        const pathIsRelative = ['..', './'].some((x) => theModulePath.startsWith(x))
 
-        const requirePath = pathIsRelative ? join(this.moduleBasePath, theModulePath) : theModulePath
+        const requirePath = pathIsRelative ? join(this.moduleBasePath || '', theModulePath) : theModulePath
 
         jest.doMock(requirePath, () => {
           if (lodash.isObject(value)) {
@@ -158,8 +146,9 @@ export class TestFramework<TComponent = any> {
               }
             }
 
-            const originalModule = moduleOptions.mergeOriginalModule ? require.requireActual(requirePath) : {}
+            const originalModule = moduleOptions.mergeOriginalModule ? jest.requireActual(requirePath) : {}
             const isOriginalModuleAFunction = typeof originalModule === 'function'
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const mockHasDefaultPropertyAsFunction = value && typeof (value as any).default === 'function'
 
             if (!lodash.isObject(originalModule)) {
@@ -192,7 +181,8 @@ export class TestFramework<TComponent = any> {
                 return acc
               },
               isOriginalModuleAFunction && mockHasDefaultPropertyAsFunction
-                ? Object.assign((value as any).default.bind(null), {
+                ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  Object.assign((value as any).default.bind(null), {
                     __esModule: true,
                   })
                 : {

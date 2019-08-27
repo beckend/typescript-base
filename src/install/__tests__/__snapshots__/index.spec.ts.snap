@@ -1,17 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Install statics installFns commitlint 1`] = `
+exports[`Install statics installFns editorconfig 1`] = `
 Array [
   Object {
     "overwrite": true,
-    "pathFileInput": "/root/src/install/files/commitlint.config.js",
-    "pathFileWrite": "/root/commitlint.config.js",
+    "pathFileInput": "/root/src/install/files/.editorconfig",
+    "pathFileWrite": "/root/.editorconfig",
   },
 ]
 `;
 
 exports[`Install statics installFns eslint 1`] = `
 Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/src/install/files/tsconfig.eslint.json",
+    "pathFileWrite": "/root/tsconfig.eslint.json",
+  },
   Object {
     "overwrite": true,
     "pathFileInput": "/root/src/install/files/.eslintignore",
@@ -36,13 +41,10 @@ Array [
 `;
 
 exports[`Install statics installFns husky 1`] = `
-Array [
-  Object {
-    "overwrite": true,
-    "pathFileInput": "/root/src/install/files/.huskyrc.js",
-    "pathFileWrite": "/root/.huskyrc.js",
-  },
-]
+Object {
+  "pathDirInput": "/root/.husky",
+  "pathDirOutput": "/root/.husky",
+}
 `;
 
 exports[`Install statics installFns jest 1`] = `
@@ -51,16 +53,6 @@ Array [
     "overwrite": true,
     "pathFileInput": "/root/src/install/files/jest.config.js",
     "pathFileWrite": "/root/jest.config.js",
-  },
-]
-`;
-
-exports[`Install statics installFns nvm 1`] = `
-Array [
-  Object {
-    "overwrite": true,
-    "pathFileInput": "/root/src/install/files/.nvmrc",
-    "pathFileWrite": "/root/.nvmrc",
   },
 ]
 `;
@@ -96,16 +88,8 @@ Array [
 `;
 
 exports[`Install statics installFns vscode 1`] = `
-Array [
-  Object {
-    "overwrite": true,
-    "pathFileInput": "/root/.vscode/settings.json",
-    "pathFileWrite": "/root/.vscode/settings.json",
-  },
-  Object {
-    "overwrite": true,
-    "pathFileInput": "/root/.vscode/tasks.json",
-    "pathFileWrite": "/root/.vscode/tasks.json",
-  },
-]
+Object {
+  "pathDirInput": "/root/.vscode",
+  "pathDirOutput": "/root/.vscode",
+}
 `;

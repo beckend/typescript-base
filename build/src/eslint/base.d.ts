@@ -5,6 +5,7 @@ export interface IGetBaseOptions {
         readonly defaults: typeof defaults;
         readonly merge: typeof merge;
     }) => ReturnType<typeof getBase>;
+    readonly isReact?: boolean;
     readonly [x: string]: any;
 }
 declare const defaults: {
@@ -12,45 +13,41 @@ declare const defaults: {
         devDependencies: string[];
     };
 };
-export declare const getBase: ({ onConfig, packageDirs, pathFileTSConfig, ...rest }?: IGetBaseOptions) => {
+export declare const getBase: ({ onConfig, isReact, packageDirs, pathFileTSConfig, ...rest }?: IGetBaseOptions) => {
+    root: boolean;
     extends: string[];
-    parser: string;
     parserOptions: {
-        createDefaultProgram: boolean;
-        ecmaFeatures: {
-            impliedStrict: boolean;
-            modules: boolean;
-        };
-        ecmaVersion: number;
+        extraFileExtensions: string[];
         project: any;
-        sourceType: string;
     };
-    plugins: string[];
     settings: {
+        'import/parsers': {
+            '@typescript-eslint/parser': string[];
+        };
         'import/resolver': {
             typescript: {
-                directory: any;
+                alwaysTryTypes: boolean;
+                project: any[];
             };
         };
     };
     rules: {
-        'jsx-a11y/control-has-associated-label': string;
-        'prettier/prettier': string;
         'import/no-extraneous-dependencies': (string | {
             devDependencies: never[];
             packageDir: any[];
         })[];
-        'import/no-unresolved': string;
-        'import/prefer-default-export': string;
-        '@typescript-eslint/indent': string;
-        '@typescript-eslint/no-explicit-any': string;
-        '@typescript-eslint/explicit-function-return-type': string;
-        '@typescript-eslint/no-unused-vars': (string | {
-            vars: string;
-            args: string;
-            ignoreRestSiblings: boolean;
+        '@typescript-eslint/no-floating-promises': (string | {
+            ignoreIIFE: boolean;
         })[];
-        '@typescript-eslint/interface-name-prefix': string[];
+        'no-plusplus': string;
+        '@typescript-eslint/unbound-method': string;
+        '@typescript-eslint/explicit-module-boundary-types': string;
+        '@typescript-eslint/no-var-requires': string;
+        '@typescript-eslint/no-unsafe-return': string;
+        '@typescript-eslint/no-unsafe-assignment': string;
+        '@typescript-eslint/no-unsafe-call': string;
+        '@typescript-eslint/no-unsafe-member-access': string;
+        'import/prefer-default-export': string;
     };
 } & {
     readonly [x: string]: any;

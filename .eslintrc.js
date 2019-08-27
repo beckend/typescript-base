@@ -1,10 +1,10 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { join } = require('path')
 
 const DIR_ROOT = __dirname
-const FILE_TSCONFIG = join(DIR_ROOT, 'tsconfig.json')
+const FILE_TSCONFIG = join(DIR_ROOT, 'tsconfig.eslint.json')
 
-module.exports = require('./build/src').eslint.getBaseReact({
+module.exports = require('./build/src').eslint.getBase({
+  isReact: true,
   packageDirs: [__dirname],
   pathFileTSConfig: FILE_TSCONFIG,
 
@@ -15,13 +15,7 @@ module.exports = require('./build/src').eslint.getBaseReact({
     node: true,
   },
 
-  globals: {
-    // puppeteer related
-    browser: 'readonly',
-    context: 'readonly',
-    jestPuppeteer: 'readonly',
-    page: 'readonly',
-  },
+  globals: {},
 
   onConfig: ({ config, defaults, merge }) =>
     merge(config, {

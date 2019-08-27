@@ -1,0 +1,28 @@
+{
+  "test": ".*.t(s|sx)$",
+  "exclude": ["node_modules"],
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true,
+      "dynamicImport": true,
+      "tsx": true
+    },
+    "transform": {
+      "legacyDecorator": true,
+      "decoratorMetadata": true
+    },
+    "target": "es5",
+    "loose": false,
+    "externalHelpers": true,
+    "keepClassNames": false
+  },
+  "module": {
+    "type": "commonjs",
+    "strict": true,
+    "strictMode": true,
+    "lazy": false,
+    "noInterop": true
+  },
+  "sourceMaps": false
+}

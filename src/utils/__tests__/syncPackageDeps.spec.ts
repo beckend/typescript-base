@@ -14,7 +14,7 @@ describe(targetModule.name, () => {
       'fs-extra': {
         readJSON: jest.fn().mockImplementation((path: string) => {
           expect(path).toEqual('/')
-          return TestFramework.getters.deferredPromise<{}>(({ resolve }) => resolve({}))
+          return TestFramework.getters.deferredPromise<Record<string, unknown>>(({ resolve }) => resolve({}))
         }),
         writeFile: jest.fn(),
       },
@@ -31,7 +31,7 @@ describe(targetModule.name, () => {
     const { NewModule: newModule, input } = tf.utils.doMock({
       'fs-extra': {
         readJSON: jest.fn().mockImplementation((path: string) =>
-          TestFramework.getters.deferredPromise<{}>(({ resolve }) =>
+          TestFramework.getters.deferredPromise<Record<string, unknown>>(({ resolve }) =>
             resolve({
               dependencies: path === '/pathPackageSource' ? {} : undefined,
             })
@@ -54,7 +54,7 @@ describe(targetModule.name, () => {
     const { NewModule: newModule, input } = tf.utils.doMock({
       'fs-extra': {
         readJSON: jest.fn().mockImplementation(() =>
-          TestFramework.getters.deferredPromise<any>(({ resolve }) =>
+          TestFramework.getters.deferredPromise<Record<string, unknown>>(({ resolve }) =>
             resolve({
               dependencies: {
                 jest: '^24.8.0',
@@ -80,7 +80,7 @@ describe(targetModule.name, () => {
     const { NewModule: newModule, input } = tf.utils.doMock({
       'fs-extra': {
         readJSON: jest.fn().mockImplementation((path: string) =>
-          TestFramework.getters.deferredPromise<{}>(({ resolve }) =>
+          TestFramework.getters.deferredPromise<Record<string, unknown>>(({ resolve }) =>
             resolve({
               dependencies:
                 path === '/pathPackageSource'

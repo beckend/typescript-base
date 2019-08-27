@@ -64,4 +64,31 @@ describe('stylelint base', () => {
       }
     `)
   })
+
+  it('able to override with callback', () => {
+    expect(
+      getBase({
+        onConfig: ({ config }) => {
+          config.plugins.push('test-plugin')
+
+          return config
+        },
+      })
+    ).toMatchInlineSnapshot(`
+      Object {
+        "extends": Array [
+          "stylelint-config-recommended",
+        ],
+        "ignoreFiles": Array [
+          "./node_modules/**/*",
+        ],
+        "plugins": Array [
+          "test-plugin",
+        ],
+        "rules": Object {
+          "function-name-case": null,
+        },
+      }
+    `)
+  })
 })

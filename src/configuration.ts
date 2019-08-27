@@ -6,13 +6,13 @@ interface IConfigurationOptions {
 }
 
 export class Configuration {
-  public static packageJSON = packageJSON
+  static packageJSON = packageJSON
 
-  public static isBuild = __filename.endsWith('.js')
+  static isBuild = __filename.endsWith('.js')
 
-  public static isTest = process.env.NODE_ENV === 'test'
+  static isTest = process.env.NODE_ENV === 'test'
 
-  public static createPathsConfig({ pathRoot: THE_ROOT }: { readonly pathRoot: string }) {
+  static createPathsConfig({ pathRoot: THE_ROOT }: { readonly pathRoot: string }) {
     return {
       DIR: {
         ROOT: THE_ROOT,
@@ -22,9 +22,9 @@ export class Configuration {
     }
   }
 
-  public PATH: ReturnType<typeof Configuration.createPathsConfig>
+  PATH: ReturnType<typeof Configuration.createPathsConfig>
 
-  public constructor({ pathRoot }: IConfigurationOptions) {
+  constructor({ pathRoot }: IConfigurationOptions) {
     this.PATH = Configuration.createPathsConfig({ pathRoot })
   }
 }

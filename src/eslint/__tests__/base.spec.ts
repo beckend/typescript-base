@@ -1,22 +1,50 @@
-import { CLIEngine } from 'eslint'
+import { ESLint } from 'eslint'
 import { join } from 'path'
 
 import { getBase } from '../base'
 
-describe('Eslint base config', () => {
-  const FILE_ESLINTRC = join(__dirname, 'eslintrc.base.js')
-  const fixtures = {
-    base1: join(__dirname, '..', 'base.ts'),
+describe('Eslint getBase', () => {
+  const utils = {
+    testLinter<
+      T1 extends {
+        readonly pathFileEslintRC: string
+        readonly fixtures: {
+          readonly [x: string]: string
+        }
+      }
+    >({ fixtures, pathFileEslintRC }: T1) {
+      it('no errors', async () => {
+        const linter = new ESLint({ overrideConfigFile: pathFileEslintRC, useEslintrc: false })
+        const result = await linter.lintFiles(Object.values(fixtures))
+
+        expect(result.length > 0).toEqual(true)
+
+        result.forEach(({ messages }) => {
+          expect(messages.length).toEqual(0)
+        })
+      }, 30000)
+    },
   }
-  const eslintCLI = new CLIEngine({ configFile: FILE_ESLINTRC })
 
-  it('no errors', () => {
-    expect(eslintCLI.executeOnFiles(Object.values(fixtures)).errorCount).toEqual(0)
-  }, 30000)
-})
+  describe('base config', () => {
+    utils.testLinter({
+      fixtures: {
+        base1: join(__dirname, '..', 'base.ts'),
+      },
+      pathFileEslintRC: join(__dirname, 'eslintrc.base.js'),
+    })
+  })
 
-describe('getBaseReact', () => {
-  it('return proper config', () => {
+  describe('react config', () => {
+    const DIR_FIXTURES = join(__dirname, 'fixtures')
+    const fixtures = {
+      react1: join(DIR_FIXTURES, 'good/react-class.tsx'),
+    }
+
+    utils.testLinter({ fixtures, pathFileEslintRC: join(__dirname, 'eslintrc.base.react.js') })
+  })
+
+  it('returns proper config', () => {
     expect(
       getBase({
         packageDirs: ['/test/dir'],
@@ -42,43 +70,35 @@ describe('getBaseReact', () => {
     ).toMatchInlineSnapshot(`
       Object {
         "extends": Array [
-          "airbnb-base",
+          "airbnb-typescript/base",
+          "plugin:import/errors",
+          "plugin:import/warnings",
+          "plugin:import/typescript",
           "plugin:@typescript-eslint/recommended",
+          "plugin:@typescript-eslint/recommended-requiring-type-checking",
           "prettier",
-          "prettier/@typescript-eslint",
         ],
-        "parser": "@typescript-eslint/parser",
         "parserOptions": Object {
-          "createDefaultProgram": true,
-          "ecmaFeatures": Object {
-            "impliedStrict": true,
-            "modules": true,
-          },
-          "ecmaVersion": 2019,
-          "project": "/test/file.json",
-          "sourceType": "module",
-        },
-        "plugins": Array [
-          "import",
-          "@typescript-eslint",
-          "prettier",
-        ],
-        "rules": Object {
-          "@typescript-eslint/explicit-function-return-type": "off",
-          "@typescript-eslint/indent": "off",
-          "@typescript-eslint/interface-name-prefix": Array [
-            "error",
-            "always",
+          "extraFileExtensions": Array [
+            ".mjs",
           ],
-          "@typescript-eslint/no-explicit-any": "off",
-          "@typescript-eslint/no-unused-vars": Array [
+          "project": "/test/file.json",
+        },
+        "root": true,
+        "rules": Object {
+          "@typescript-eslint/explicit-module-boundary-types": "off",
+          "@typescript-eslint/no-floating-promises": Array [
             "error",
             Object {
-              "args": "after-used",
-              "ignoreRestSiblings": false,
-              "vars": "all",
+              "ignoreIIFE": true,
             },
           ],
+          "@typescript-eslint/no-unsafe-assignment": "off",
+          "@typescript-eslint/no-unsafe-call": "off",
+          "@typescript-eslint/no-unsafe-member-access": "off",
+          "@typescript-eslint/no-unsafe-return": "off",
+          "@typescript-eslint/no-var-requires": "off",
+          "@typescript-eslint/unbound-method": "off",
           "import/no-extraneous-dependencies": Array [
             "error",
             Object {
@@ -97,15 +117,24 @@ describe('getBaseReact', () => {
               ],
             },
           ],
-          "import/no-unresolved": "error",
           "import/prefer-default-export": "off",
-          "jsx-a11y/control-has-associated-label": "off",
-          "prettier/prettier": "error",
+          "no-plusplus": "off",
         },
         "settings": Object {
+          "import/parsers": Object {
+            "@typescript-eslint/parser": Array [
+              ".ts",
+              ".tsx",
+              ".js",
+              ".jsx",
+            ],
+          },
           "import/resolver": Object {
             "typescript": Object {
-              "directory": "/test/file.json",
+              "alwaysTryTypes": true,
+              "project": Array [
+                "/test/file.json",
+              ],
             },
           },
         },
@@ -116,8 +145,8 @@ describe('getBaseReact', () => {
   it('allow config override', () => {
     expect(
       getBase({
-        onConfig: ({ config, defaults, merge }) => {
-          return merge(config, {
+        onConfig: ({ config, defaults, merge }) =>
+          merge(config, {
             rules: {
               'import/no-extraneous-dependencies': [
                 'error',
@@ -126,49 +155,40 @@ describe('getBaseReact', () => {
                 },
               ],
             },
-          })
-        },
+          }),
       })
     ).toMatchInlineSnapshot(`
       Object {
         "extends": Array [
-          "airbnb-base",
+          "airbnb-typescript/base",
+          "plugin:import/errors",
+          "plugin:import/warnings",
+          "plugin:import/typescript",
           "plugin:@typescript-eslint/recommended",
+          "plugin:@typescript-eslint/recommended-requiring-type-checking",
           "prettier",
-          "prettier/@typescript-eslint",
         ],
-        "parser": "@typescript-eslint/parser",
         "parserOptions": Object {
-          "createDefaultProgram": true,
-          "ecmaFeatures": Object {
-            "impliedStrict": true,
-            "modules": true,
-          },
-          "ecmaVersion": 2019,
-          "project": undefined,
-          "sourceType": "module",
-        },
-        "plugins": Array [
-          "import",
-          "@typescript-eslint",
-          "prettier",
-        ],
-        "rules": Object {
-          "@typescript-eslint/explicit-function-return-type": "off",
-          "@typescript-eslint/indent": "off",
-          "@typescript-eslint/interface-name-prefix": Array [
-            "error",
-            "always",
+          "extraFileExtensions": Array [
+            ".mjs",
           ],
-          "@typescript-eslint/no-explicit-any": "off",
-          "@typescript-eslint/no-unused-vars": Array [
+          "project": undefined,
+        },
+        "root": true,
+        "rules": Object {
+          "@typescript-eslint/explicit-module-boundary-types": "off",
+          "@typescript-eslint/no-floating-promises": Array [
             "error",
             Object {
-              "args": "after-used",
-              "ignoreRestSiblings": false,
-              "vars": "all",
+              "ignoreIIFE": true,
             },
           ],
+          "@typescript-eslint/no-unsafe-assignment": "off",
+          "@typescript-eslint/no-unsafe-call": "off",
+          "@typescript-eslint/no-unsafe-member-access": "off",
+          "@typescript-eslint/no-unsafe-return": "off",
+          "@typescript-eslint/no-var-requires": "off",
+          "@typescript-eslint/unbound-method": "off",
           "import/no-extraneous-dependencies": Array [
             "error",
             Object {
@@ -189,15 +209,24 @@ describe('getBaseReact', () => {
               "packageDir": Array [],
             },
           ],
-          "import/no-unresolved": "error",
           "import/prefer-default-export": "off",
-          "jsx-a11y/control-has-associated-label": "off",
-          "prettier/prettier": "error",
+          "no-plusplus": "off",
         },
         "settings": Object {
+          "import/parsers": Object {
+            "@typescript-eslint/parser": Array [
+              ".ts",
+              ".tsx",
+              ".js",
+              ".jsx",
+            ],
+          },
           "import/resolver": Object {
             "typescript": Object {
-              "directory": undefined,
+              "alwaysTryTypes": true,
+              "project": Array [
+                undefined,
+              ],
             },
           },
         },
@@ -209,11 +238,11 @@ describe('getBaseReact', () => {
     expect(getBase()).toBeTruthy()
   })
 
-  it('omits airbnb-base if react airbnb is included', () => {
+  it('uses plugin airbnb-typescript when isReact', () => {
     expect(
       getBase({
-        extends: ['airbnb', 'airbnb-base'],
-      }).extends.includes('airbnb-base')
-    ).toEqual(false)
+        isReact: true,
+      }).extends
+    ).toContain('airbnb-typescript')
   })
 })

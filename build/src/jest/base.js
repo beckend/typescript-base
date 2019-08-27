@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-// https://jestjs.io/docs/en/configuration.html
+exports.getBase = void 0;
 const path_1 = require("path");
-const ts_jest_1 = require("ts-jest");
+const presets_1 = require("ts-jest/presets");
 const utils_1 = require("ts-jest/utils");
 const lodash_1 = require("lodash");
+const jestConfig = require("jest-config");
 const config_1 = require("../config");
 const array_1 = require("../modules/array");
-const jestDefaults = require('jest-config').defaults;
-exports.getBase = ({ isIntegration = false, isReact = false, moduleDirectories, onConfig, rootDir, roots, setupFilesAfterEnv: setupFilesAfterEnvInput, testEnvironment = 'jest-environment-jsdom-global', TSConfig, withDefaultSetupFilesAfterEnv = true, ...rest }) => {
+const getBase = ({ isIntegration = false, isReact = false, moduleDirectories, onConfig, rootDir, roots, setupFilesAfterEnv: setupFilesAfterEnvInput, testEnvironment = 'jest-environment-jsdom', TSConfig, withDefaultSetupFilesAfterEnv = true, ...rest }) => {
     const isPuppeteer = rest.preset === 'jest-puppeteer';
     const moduleNameMapper = {
         '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': path_1.join(config_1.default.PATH.DIR.ROOT_BUILD, '__mocks__/fileMock.js'),
@@ -17,7 +17,6 @@ exports.getBase = ({ isIntegration = false, isReact = false, moduleDirectories, 
     const setupFilesAfterEnv = [
         ...array_1.returnArray(withDefaultSetupFilesAfterEnv &&
             [
-                'jest-mock-console/dist/setupTestFramework.js',
                 path_1.join(config_1.default.PATH.DIR.ROOT_BUILD, '__tests__/setupTestFramework.js'),
                 isReact &&
                     testEnvironment.includes('jsdom') &&
@@ -35,7 +34,7 @@ exports.getBase = ({ isIntegration = false, isReact = false, moduleDirectories, 
             }
         }
     }
-    const jestConfig = lodash_1.merge({
+    const config = lodash_1.merge({
         // An array of glob patterns indicating a set of files for which coverage information should be collected. If a file matches the specified glob pattern, coverage information will be collected for it even if no tests exist for this file and it's never required in the test suite.
         collectCoverageFrom: ['**/*.{ts,tsx}', '!**/*.d.ts', '!**/__*__/**'],
         coverageDirectory: 'coverage',
@@ -47,7 +46,7 @@ exports.getBase = ({ isIntegration = false, isReact = false, moduleDirectories, 
                 statements: -10,
             },
         },
-        moduleDirectories: [...jestDefaults.moduleDirectories, ...array_1.returnArray(moduleDirectories)],
+        moduleDirectories: [...jestConfig.defaults.moduleDirectories, ...array_1.returnArray(moduleDirectories)],
         moduleNameMapper,
         modulePaths: ['<rootDir>'],
         resetMocks: true,
@@ -69,13 +68,26 @@ exports.getBase = ({ isIntegration = false, isReact = false, moduleDirectories, 
         // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
         testPathIgnorePatterns: ['<rootDir>/node_modules', '<rootDir>/build', '<rootDir>/build-test'],
         transform: {
-            ...ts_jest_1.jestPreset.transform,
+            ...presets_1.defaults.transform,
         },
+        // @TODO swc cannot compile this project
+        // transform: {
+        //   '^.+\\.(t|j)sx?$': [
+        //     '@swc-node/jest',
+        //     // https://github.com/Brooooooklyn/swc-node/blob/master/packages/core/index.ts#L9s
+        //     {
+        //       dynamicImport: true,
+        //       keepClassNames: true,
+        //       target: 'es2019',
+        //     },
+        //   ],
+        // },
     }, rest);
     if (onConfig) {
-        let userConfig = jestConfig;
-        userConfig = onConfig({ config: jestConfig });
+        let userConfig = config;
+        userConfig = onConfig({ config });
         return userConfig;
     }
-    return jestConfig;
+    return config;
 };
+exports.getBase = getBase;

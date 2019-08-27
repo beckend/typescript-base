@@ -1,7 +1,5 @@
 /// <reference types="jest" />
 import * as lodash from 'lodash';
-import * as mockConsole from 'jest-mock-console';
-import { Puppeteer } from './puppeteer';
 export declare class TestFramework<TComponent = any> {
     static DUMMY_VALUES: Readonly<{
         BOOL_FALSE: boolean;
@@ -25,25 +23,17 @@ export declare class TestFramework<TComponent = any> {
             readonly timeout?: number | undefined;
         }) => Promise<T1>;
     };
-    static setup: {
-        afterEach({ resetMockFS }?: {
-            readonly resetMockFS?: boolean | undefined;
-        }): void;
-    };
     static utils: {
-        Puppeteer: typeof Puppeteer;
         lodash: lodash.LoDashStatic;
-        mockConsole: typeof mockConsole;
-        mockFS: any;
-        expectWithCalledTimes<T1 extends jest.Mock<any, any>>(spy: T1, times?: number): jest.Matchers<T1>;
+        expectWithCalledTimes<T1 extends jest.Mock<any, any>>(spy: T1, times?: number): jest.JestMatchers<T1>;
     };
     TargetComponent: TComponent;
-    moduleBasePath: string;
+    moduleBasePath?: string;
     moduleKey?: string;
     modulePath: string;
     constructor({ TargetComponent, moduleBasePath, moduleKey, modulePath, }: {
         readonly TargetComponent?: TComponent;
-        readonly moduleBasePath: string;
+        readonly moduleBasePath?: string;
         readonly moduleKey?: string;
         readonly modulePath: string;
     });

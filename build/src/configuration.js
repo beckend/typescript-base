@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Configuration = void 0;
 const path_1 = require("path");
 const packageJSON = require("../package.json");
 class Configuration {
-    constructor({ pathRoot }) {
-        this.PATH = Configuration.createPathsConfig({ pathRoot });
-    }
+    static packageJSON = packageJSON;
+    static isBuild = __filename.endsWith('.js');
+    static isTest = process.env.NODE_ENV === 'test';
     static createPathsConfig({ pathRoot: THE_ROOT }) {
         return {
             DIR: {
@@ -15,8 +16,9 @@ class Configuration {
             },
         };
     }
+    PATH;
+    constructor({ pathRoot }) {
+        this.PATH = Configuration.createPathsConfig({ pathRoot });
+    }
 }
-Configuration.packageJSON = packageJSON;
-Configuration.isBuild = __filename.endsWith('.js');
-Configuration.isTest = process.env.NODE_ENV === 'test';
 exports.Configuration = Configuration;

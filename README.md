@@ -1,85 +1,10 @@
-# standard-version (<https://github.com/conventional-changelog/standard-version>)
-
-### Dependencies: included
-
-```
-package.json
-```
-
-```json
-{
-  "scripts": {
-    "release": "standard-version"
-  }
-}
-```
-
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-
-# husky (<https://github.com/typicode/husky>)
-
-### Dependencies: included
-
-```
-.huskyrc.js
-```
-
-```javascript
-// accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').husky.getBase({
-  customOverride: true,
-})
-```
-
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-
-# commitlint (<https://github.com/conventional-changelog/commitlint>)
-
-### Dependencies: included
-
-```
-commitlint.config.js
-```
-
-```javascript
-// accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').commitlint.getBase({
-  customOverride: true,
-})
-```
-
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
 
 # Eslint (<https://github.com/eslint/eslint>)
 
 ```javascript
 const {
   eslint: { getBase, getBaseReact },
-} = require('typescript-base')
+} = require('@linkening/typescript-base')
 ```
 
 ```
@@ -149,13 +74,7 @@ module.exports = getBaseReact({
     node: true,
   },
 
-  globals: {
-    // puppeteer related if you are using that jest config, otherwise skip
-    browser: 'readonly',
-    context: 'readonly',
-    jestPuppeteer: 'readonly',
-    page: 'readonly',
-  },
+  globals: {},
 
   rules: {
     'import/no-extraneous-dependencies': [
@@ -194,7 +113,7 @@ Preferred
 
 ```json
 {
-  "extends": "./node_modules/typescript-base/tsconfig.base.declaration.json"
+  "extends": "./node_modules/@linkening/typescript-base/tsconfig.base.declaration.json"
 }
 ```
 
@@ -202,7 +121,7 @@ Or this config if project does not support declaration due to conflict
 
 ```json
 {
-  "extends": "./node_modules/typescript-base/tsconfig.base.json"
+  "extends": "./node_modules/@linkening/typescript-base/tsconfig.base.json"
 }
 ```
 
@@ -222,7 +141,7 @@ Or this config if project does not support declaration due to conflict
 
 ```javascript
 // accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').prettier.getBase({
+module.exports = require('@linkening/typescript-base').prettier.getBase({
   customOverride: true,
 })
 ```
@@ -251,7 +170,7 @@ npm i -D stylelint stylelint-config-recommended
 
 ```javascript
 // accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').stylelint.getBase({
+module.exports = require('@linkening/typescript-base').stylelint.getBase({
   customOverride: true,
 })
 ```
@@ -284,7 +203,7 @@ jest.config.js
 const DIR_ROOT = __dirname
 
 // accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').jest.getBase({
+module.exports = require('@linkening/typescript-base').jest.getBase({
   rootDir: DIR_ROOT,
   testEnvironment: 'node',
 })
@@ -299,41 +218,20 @@ module.exports = require('typescript-base').jest.getBase({
 ### Dependencies
 
 ```console
-npm i -D @types/jest-image-snapshot @testing-library/jest-dom jest-environment-jsdom jest-environment-jsdom-global jest-image-snapshot
+npm i -D @testing-library/jest-dom jest-environment-jsdom jest-environment-jsdom
 ```
 
 ```javascript
 const DIR_ROOT = __dirname
 
 // accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').jest.getBase({
+module.exports = require('@linkening/typescript-base').jest.getBase({
   isReact: true,
   rootDir: DIR_ROOT,
-  testEnvironment: 'jest-environment-jsdom-global',
+  testEnvironment: 'jest-environment-jsdom',
 })
 ```
 
 &nbsp;
 &nbsp;
 &nbsp;
-
-### Integration with puppeteer
-
-### Dependencies
-
-```console
-npm i -D @types/expect-puppeteer @types/jest-environment-puppeteer @types/puppeteer @types/jest-image-snapshot jest-puppeteer puppeteer @testing-library/jest-dom jest-image-snapshot
-```
-
-```
-jest.integration.config.js
-```
-
-```javascript
-const DIR_ROOT = __dirname
-
-// accepts any options to be deeply merged into config object
-module.exports = require('typescript-base').jest.getBaseIntegration({
-  rootDir: DIR_ROOT,
-})
-```

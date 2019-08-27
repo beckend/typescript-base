@@ -1,178 +1,48 @@
 import { FilePatcher } from './utils/filePatcher';
-export declare const commitlint: {
-    getBase: (options?: {
-        readonly [x: string]: any;
-    }) => {
-        hooks: {
-            'commit-msg': string;
-            'pre-commit': string;
-        };
-    } & {
-        readonly [x: string]: any;
-    };
-};
 export declare const eslint: {
-    getBase: ({ onConfig, packageDirs, pathFileTSConfig, ...rest }?: import("./eslint/base").IGetBaseOptions) => {
+    getBase: ({ onConfig, isReact, packageDirs, pathFileTSConfig, ...rest }?: import("./eslint/base").IGetBaseOptions) => {
+        root: boolean;
         extends: string[];
-        parser: string;
         parserOptions: {
-            createDefaultProgram: boolean;
-            ecmaFeatures: {
-                impliedStrict: boolean;
-                modules: boolean;
-            };
-            ecmaVersion: number;
+            extraFileExtensions: string[];
             project: any;
-            sourceType: string;
         };
-        plugins: string[];
         settings: {
+            'import/parsers': {
+                '@typescript-eslint/parser': string[];
+            };
             'import/resolver': {
                 typescript: {
-                    directory: any;
+                    alwaysTryTypes: boolean;
+                    project: any[];
                 };
             };
         };
         rules: {
-            'jsx-a11y/control-has-associated-label': string;
-            'prettier/prettier': string;
             'import/no-extraneous-dependencies': (string | {
                 devDependencies: never[];
                 packageDir: any[];
             })[];
-            'import/no-unresolved': string;
+            '@typescript-eslint/no-floating-promises': (string | {
+                ignoreIIFE: boolean;
+            })[];
+            'no-plusplus': string;
+            '@typescript-eslint/unbound-method': string;
+            '@typescript-eslint/explicit-module-boundary-types': string;
+            '@typescript-eslint/no-var-requires': string;
+            '@typescript-eslint/no-unsafe-return': string;
+            '@typescript-eslint/no-unsafe-assignment': string;
+            '@typescript-eslint/no-unsafe-call': string;
+            '@typescript-eslint/no-unsafe-member-access': string;
             'import/prefer-default-export': string;
-            '@typescript-eslint/indent': string;
-            '@typescript-eslint/no-explicit-any': string;
-            '@typescript-eslint/explicit-function-return-type': string;
-            '@typescript-eslint/no-unused-vars': (string | {
-                vars: string;
-                args: string;
-                ignoreRestSiblings: boolean;
-            })[];
-            '@typescript-eslint/interface-name-prefix': string[];
         };
-    } & {
-        readonly [x: string]: any;
-    };
-    getBaseReact: ({ packageDirs, pathFileTSConfig, ...rest }?: import("./eslint/base").IGetBaseOptions) => {
-        extends: string[];
-        parser: string;
-        parserOptions: {
-            createDefaultProgram: boolean;
-            ecmaFeatures: {
-                impliedStrict: boolean;
-                modules: boolean;
-            };
-            ecmaVersion: number;
-            project: any;
-            sourceType: string;
-        };
-        plugins: string[];
-        settings: {
-            'import/resolver': {
-                typescript: {
-                    directory: any;
-                };
-            };
-        };
-        rules: {
-            'jsx-a11y/control-has-associated-label': string;
-            'prettier/prettier': string;
-            'import/no-extraneous-dependencies': (string | {
-                devDependencies: never[];
-                packageDir: any[];
-            })[];
-            'import/no-unresolved': string;
-            'import/prefer-default-export': string;
-            '@typescript-eslint/indent': string;
-            '@typescript-eslint/no-explicit-any': string;
-            '@typescript-eslint/explicit-function-return-type': string;
-            '@typescript-eslint/no-unused-vars': (string | {
-                vars: string;
-                args: string;
-                ignoreRestSiblings: boolean;
-            })[];
-            '@typescript-eslint/interface-name-prefix': string[];
-        };
-    } & {
-        readonly [x: string]: any;
-    };
-};
-export declare const husky: {
-    getBase: (options?: {
-        readonly [x: string]: any;
-    }) => {
-        extends: string[];
     } & {
         readonly [x: string]: any;
     };
 };
 export declare const jest: {
-    getBase: ({ isIntegration, isReact, moduleDirectories, onConfig, rootDir, roots, setupFilesAfterEnv: setupFilesAfterEnvInput, testEnvironment, TSConfig, withDefaultSetupFilesAfterEnv, ...rest }: import("./jest/base").IGetBaseOptions) => {
-        collectCoverageFrom: string[];
-        coverageDirectory: string;
-        coverageThreshold: {
-            global: {
-                branches: number;
-                functions: number;
-                lines: number;
-                statements: number;
-            };
-        };
-        moduleDirectories: any[];
-        moduleNameMapper: {
-            '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': string;
-            '\\.(css|less)$': string;
-        };
-        modulePaths: string[];
-        resetMocks: boolean;
-        resetModules: boolean;
-        roots: string[] | undefined;
-        rootDir: string;
-        setupFilesAfterEnv: string[];
-        testEnvironment: string;
-        testMatch: string[];
-        testPathIgnorePatterns: string[];
-        transform: {
-            [x: string]: string;
-        };
-    } & {
-        readonly [x: string]: any;
-        preset?: string | undefined;
-    };
-    getBaseIntegration: (opts: import("./jest/base").IGetBaseOptions) => {
-        collectCoverageFrom: string[];
-        coverageDirectory: string;
-        coverageThreshold: {
-            global: {
-                branches: number;
-                functions: number;
-                lines: number;
-                statements: number;
-            };
-        };
-        moduleDirectories: any[];
-        moduleNameMapper: {
-            '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': string;
-            '\\.(css|less)$': string;
-        };
-        modulePaths: string[];
-        resetMocks: boolean;
-        resetModules: boolean;
-        roots: string[] | undefined;
-        rootDir: string;
-        setupFilesAfterEnv: string[];
-        testEnvironment: string;
-        testMatch: string[];
-        testPathIgnorePatterns: string[];
-        transform: {
-            [x: string]: string;
-        };
-    } & {
-        readonly [x: string]: any;
-        preset?: string | undefined;
-    };
+    getBase: ({ isIntegration, isReact, moduleDirectories, onConfig, rootDir, roots, setupFilesAfterEnv: setupFilesAfterEnvInput, testEnvironment, TSConfig, withDefaultSetupFilesAfterEnv, ...rest }: import("./jest/base").IGetBaseOptions) => import("ts-jest/dist/types").InitialOptionsTsJest;
+    getBaseIntegration: (opts: import("./jest/base").IGetBaseOptions) => import("ts-jest/dist/types").InitialOptionsTsJest;
 };
 export declare const prettier: {
     getBase: (options?: {
@@ -188,14 +58,23 @@ export declare const prettier: {
     };
 };
 export declare const stylelint: {
-    getBase: (options?: import("./model").TPartialReadonly<import("stylelint").Configuration>) => {
+    getBase: ({ onConfig, ...options }?: import("./model").TPartialReadonly<import("stylelint").Configuration> & import("./stylelint/base").IGetBaseOptions) => {
         plugins: never[];
         extends: string[];
         rules: {
             'function-name-case': null;
         };
         ignoreFiles: string[];
-    } & import("./model").TPartialReadonly<import("stylelint").Configuration>;
+    } & {
+        readonly [x: string]: any;
+        rules?: Record<string, any> | undefined;
+        extends?: string | string[] | undefined;
+        plugins?: string[] | undefined;
+        processors?: string[] | undefined;
+        ignoreFiles?: string | string[] | undefined;
+        defaultSeverity?: import("stylelint").Severity | undefined;
+        isReact?: boolean | undefined;
+    };
 };
 export declare const utils: {
     FilePatcher: typeof FilePatcher;

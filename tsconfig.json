@@ -1,9 +1,4 @@
 {
-  "compilerOptions": {
-    "noEmitOnError": false,
-    "outDir": "./build",
-    "sourceMap": false
-  },
   "exclude": ["./build**/**/*"],
   "extends": "./tsconfig.base.declaration"
 }

@@ -19,8 +19,16 @@ export declare class FilePatcher {
     };
     static utils: {
         fsExtra: typeof fsExtra;
-        logger: any;
-        path: typeof path;
+        logger: import("just-task").Logger;
+        path: path.PlatformPath;
+        addWhenNotExist({ addEOL, content, contentAdded, }: {
+            readonly addEOL?: boolean | undefined;
+            readonly contentAdded: string;
+            readonly content: string | Buffer;
+        }): string;
+        getString({ content }: {
+            readonly content: string | Buffer;
+        }): string;
         patchStringContent({ content, stringMatch, stringReplace, }: {
             readonly content: string | Buffer;
             readonly stringMatch: string;

@@ -36,15 +36,12 @@ describe('jest base config', () => {
         "modulePaths": Array [
           "<rootDir>",
         ],
-        "preset": "jest-puppeteer",
         "resetMocks": true,
         "resetModules": true,
         "rootDir": "/root",
         "roots": undefined,
         "setupFilesAfterEnv": Array [
-          "jest-mock-console/dist/setupTestFramework.js",
           "/root/build/__tests__/setupTestFramework.js",
-          "/root/build/__tests__/setupTestFrameworkIntegration.js",
         ],
         "testEnvironment": "/root/jest.config.integration.testEnvironment.js",
         "testMatch": Array [
