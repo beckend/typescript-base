@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getBase = void 0;
 // https://jestjs.io/docs/en/configuration.html
 const path_1 = require("path");
 const ts_jest_1 = require("ts-jest");

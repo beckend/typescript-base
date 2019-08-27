@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getBase = void 0;
 const lodash_1 = require("lodash");
 const array_1 = require("../modules/array");
 const defaults = {
@@ -29,7 +30,7 @@ exports.getBase = ({ onConfig, packageDirs, pathFileTSConfig, ...rest } = {}) =>
                 impliedStrict: true,
                 modules: true,
             },
-            ecmaVersion: 2019,
+            ecmaVersion: 2020,
             project: pathFileTSConfig,
             sourceType: 'module',
         },
@@ -52,7 +53,10 @@ exports.getBase = ({ onConfig, packageDirs, pathFileTSConfig, ...rest } = {}) =>
                 },
             ],
             'import/no-unresolved': 'error',
+            'import/extensions': 'off',
             'import/prefer-default-export': 'off',
+            '@typescript-eslint/explicit-module-boundary-types': 'off',
+            '@typescript-eslint/no-empty-function': 'off',
             '@typescript-eslint/indent': 'off',
             '@typescript-eslint/no-explicit-any': 'off',
             '@typescript-eslint/explicit-function-return-type': 'off',
@@ -64,7 +68,6 @@ exports.getBase = ({ onConfig, packageDirs, pathFileTSConfig, ...rest } = {}) =>
                     ignoreRestSiblings: false,
                 },
             ],
-            '@typescript-eslint/interface-name-prefix': ['error', 'always'],
         },
     }, rest);
     const hasReactConfig = results.extends.includes('airbnb');

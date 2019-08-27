@@ -25,7 +25,7 @@ export declare const getBaseIntegration: (opts: IGetBaseOptions) => {
     testMatch: string[];
     testPathIgnorePatterns: string[];
     transform: {
-        [x: string]: string;
+        [x: string]: string | import("@jest/types/build/Config").TransformerConfig;
     };
 } & {
     readonly [x: string]: any;

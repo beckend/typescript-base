@@ -1,8 +1,6 @@
 {
   "compilerOptions": {
-    "noEmitOnError": false,
-    "outDir": "./build",
-    "sourceMap": false
+    "allowSyntheticDefaultImports": true
   },
   "exclude": ["./build**/**/*"],
   "extends": "./tsconfig.base.declaration"

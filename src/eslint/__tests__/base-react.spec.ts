@@ -57,7 +57,7 @@ describe('getBaseReact', () => {
             "jsx": true,
             "modules": true,
           },
-          "ecmaVersion": 2019,
+          "ecmaVersion": 2020,
           "project": "/test/file.json",
           "sourceType": "module",
         },
@@ -71,11 +71,9 @@ describe('getBaseReact', () => {
         ],
         "rules": Object {
           "@typescript-eslint/explicit-function-return-type": "off",
+          "@typescript-eslint/explicit-module-boundary-types": "off",
           "@typescript-eslint/indent": "off",
-          "@typescript-eslint/interface-name-prefix": Array [
-            "error",
-            "always",
-          ],
+          "@typescript-eslint/no-empty-function": "off",
           "@typescript-eslint/no-explicit-any": "off",
           "@typescript-eslint/no-unused-vars": Array [
             "error",
@@ -85,6 +83,7 @@ describe('getBaseReact', () => {
               "vars": "all",
             },
           ],
+          "import/extensions": "off",
           "import/no-extraneous-dependencies": Array [
             "error",
             Object {

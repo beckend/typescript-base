@@ -1,7 +1,9 @@
 import * as React from 'react'
 
 export class ReactClass extends React.Component<{ readonly name: string }> {
-  public handleOnClick = () => {}
+  public handleOnClick = () => {
+    // left empty
+  }
 
   public render() {
     const { props } = this

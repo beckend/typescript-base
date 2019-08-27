@@ -20,7 +20,7 @@ export const syncPackageDeps = async ({
       ...packageSyncTo.dependencies,
     }
 
-    Object.keys(packageSyncTo.dependencies).forEach(k => {
+    Object.keys(packageSyncTo.dependencies).forEach((k) => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const versionPJSON = packageSource.dependencies![k]
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
