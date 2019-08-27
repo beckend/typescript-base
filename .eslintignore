@@ -1,0 +1,6 @@
+/build/**/*
+**/*.d.ts
+!.*
+/node_modules/**/*
+/src/install/files/**/*
+/coverage/**/*

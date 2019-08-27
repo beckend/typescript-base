@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Install statics installFns commitlint 1`] = `
+Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/src/install/files/commitlint.config.js",
+    "pathFileWrite": "/root/commitlint.config.js",
+  },
+]
+`;
+
+exports[`Install statics installFns eslint 1`] = `
+Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/src/install/files/.eslintignore",
+    "pathFileWrite": "/root/.eslintignore",
+  },
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/src/install/files/config.eslintrc.js",
+    "pathFileWrite": "/root/.eslintrc.js",
+  },
+]
+`;
+
+exports[`Install statics installFns git 1`] = `
+Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/src/install/files/gitignore",
+    "pathFileWrite": "/root/.gitignore",
+  },
+]
+`;
+
+exports[`Install statics installFns husky 1`] = `
+Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/src/install/files/.huskyrc.js",
+    "pathFileWrite": "/root/.huskyrc.js",
+  },
+]
+`;
+
+exports[`Install statics installFns jest 1`] = `
+Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/src/install/files/jest.config.js",
+    "pathFileWrite": "/root/jest.config.js",
+  },
+]
+`;
+
+exports[`Install statics installFns nvm 1`] = `
+Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/src/install/files/.nvmrc",
+    "pathFileWrite": "/root/.nvmrc",
+  },
+]
+`;
+
+exports[`Install statics installFns prettier 1`] = `
+Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/src/install/files/.prettierrc.js",
+    "pathFileWrite": "/root/.prettierrc.js",
+  },
+]
+`;
+
+exports[`Install statics installFns stylelint 1`] = `
+Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/src/install/files/.stylelintrc.js",
+    "pathFileWrite": "/root/.stylelintrc.js",
+  },
+]
+`;
+
+exports[`Install statics installFns typescript 1`] = `
+Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/src/install/files/tsconfig.json",
+    "pathFileWrite": "/root/tsconfig.json",
+  },
+]
+`;
+
+exports[`Install statics installFns vscode 1`] = `
+Array [
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/.vscode/settings.json",
+    "pathFileWrite": "/root/.vscode/settings.json",
+  },
+  Object {
+    "overwrite": true,
+    "pathFileInput": "/root/.vscode/tasks.json",
+    "pathFileWrite": "/root/.vscode/tasks.json",
+  },
+]
+`;
