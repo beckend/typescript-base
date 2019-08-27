@@ -2,7 +2,7 @@
 import * as qs from 'querystring';
 export declare class Puppeteer {
     baseImageURL: string;
-    constructor({ baseImageURL }?: {
+    constructor({ baseImageURL, }?: {
         readonly baseImageURL?: string;
     });
     getImageURL: ({ baseImageURL, query, }: {

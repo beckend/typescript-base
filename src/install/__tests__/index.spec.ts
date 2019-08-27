@@ -16,7 +16,7 @@ jest.mock('../../config', () => ({
 import { join } from 'path'
 
 import { TestFramework } from '__tests__/testFramework'
-import { Install as TargetModule } from '..'
+import { Install as TargetModule, Install } from '..'
 
 describe(TargetModule.name, () => {
   const tf = new TestFramework<typeof TargetModule>({
@@ -26,7 +26,6 @@ describe(TargetModule.name, () => {
   })
 
   const DIR_ROOT = join(__dirname, '../../..')
-  const isCI = process.env.CI === 'true'
 
   TestFramework.setup.afterEach()
 
@@ -144,12 +143,26 @@ describe(TargetModule.name, () => {
           expect(targetFn({ pathFile: 'path/test.txt' })).toEqual('/root/src/install/files/path/test.txt')
         })
       })
+
+      describe('typescriptBaseRC', () => {
+        const targetFnName = 'typescriptBaseRC'
+        const targetFn = TargetModule.getters[targetFnName]
+
+        it('catch', () =>
+          expect(targetFn()).resolves.toMatchInlineSnapshot(`
+            Object {
+              "filesToCopy": Object {
+                "exclude": Array [],
+              },
+              "modifyPackageJSON": true,
+            }
+          `))
+      })
     })
 
     describe('installFns', () => {
       describe('base', () => {
         const targetFnName = 'base'
-        const targetFn = TargetModule.installFns[targetFnName]
 
         describe('overwrite false', () => {
           it('file does not exist', () => {
@@ -163,8 +176,6 @@ describe(TargetModule.name, () => {
                 default: () => TestFramework.getters.deferredPromise(({ resolve }) => resolve(undefined)),
               },
             })
-
-            const targetNewFn = NewModule.installFns[targetFnName]
             ;(NewModule as any).getters.fileInfo = () =>
               TestFramework.getters.deferredPromise(({ resolve }) =>
                 resolve({
@@ -174,48 +185,50 @@ describe(TargetModule.name, () => {
                 })
               )
 
+            const targetNewFn = NewModule.installFns[targetFnName]
+
             return expect(targetNewFn({ pathFileInput: '/', pathFileWrite: '/tmp/_____test.txt' })).resolves
               .toMatchInlineSnapshot(`
-                  Object {
-                    "exists": false,
-                    "overwrite": false,
-                    "wroteFile": true,
-                  }
+                Object {
+                  "exists": false,
+                  "overwrite": false,
+                  "wroteFile": true,
+                }
               `)
           })
 
           // differences in CI causes this one to fail
-          if (!isCI) {
-            it('file exists', () => {
-              const { NewModule } = tf.utils.doMock({
-                'fs-extra': {
-                  createReadStream: TestFramework.DUMMY_VALUES.FN_NOOP,
-                  createWriteStream: TestFramework.DUMMY_VALUES.FN_NOOP,
-                },
-                promisepipe: {
-                  default: () => TestFramework.getters.deferredPromise(({ resolve }) => resolve(undefined)),
-                },
-              })
-              ;(NewModule as any).getters.fileInfo = () =>
-                TestFramework.getters.deferredPromise(({ resolve }) =>
-                  resolve({
-                    exists: true,
-                    readable: true,
-                    writeable: true,
-                  })
-                )
-
-              return expect(
-                targetFn({ overwrite: false, pathFileInput: '/whatever', pathFileWrite: '/tmp/_____test.txt' })
-              ).resolves.toMatchInlineSnapshot(`
-                Object {
-                  "exists": true,
-                  "overwrite": false,
-                  "wroteFile": false,
-                }
-              `)
+          it('file exists', () => {
+            const { NewModule } = tf.utils.doMock({
+              'fs-extra': {
+                createReadStream: TestFramework.DUMMY_VALUES.FN_NOOP,
+                createWriteStream: TestFramework.DUMMY_VALUES.FN_NOOP,
+              },
+              promisepipe: {
+                default: () => TestFramework.getters.deferredPromise(({ resolve }) => resolve(undefined)),
+              },
             })
-          }
+            ;(NewModule as any).getters.fileInfo = () =>
+              TestFramework.getters.deferredPromise(({ resolve }) =>
+                resolve({
+                  exists: true,
+                  readable: true,
+                  writeable: true,
+                })
+              )
+
+            const targetNewFn = NewModule.installFns[targetFnName]
+
+            return expect(
+              targetNewFn({ overwrite: false, pathFileInput: '/whatever', pathFileWrite: '/tmp/_____test.txt' })
+            ).resolves.toMatchInlineSnapshot(`
+              Object {
+                "exists": true,
+                "overwrite": false,
+                "wroteFile": false,
+              }
+            `)
+          })
         })
 
         describe('overwrite true', () => {
@@ -316,38 +329,38 @@ describe(TargetModule.name, () => {
           })
         })
 
-        if (!isCI) {
-          it('write error occurs', () => {
-            const { NewModule } = tf.utils.doMock({
-              'fs-extra': {
-                createReadStream: TestFramework.DUMMY_VALUES.FN_NOOP,
-                createWriteStream: TestFramework.DUMMY_VALUES.FN_NOOP,
-                ensureDir: TestFramework.DUMMY_VALUES.FN_NOOP,
-              },
-              promisepipe: {
-                default: () => TestFramework.getters.deferredPromise(({ reject }) => reject(new Error('nope'))),
-              },
-            })
-            ;(NewModule as any).getters.fileInfo = () =>
-              TestFramework.getters.deferredPromise(({ resolve }) =>
-                resolve({
-                  exists: false,
-                  readable: true,
-                  writeable: true,
-                })
-              )
-
-            return expect(
-              targetFn({ overwrite: true, pathFileInput: '/whatever', pathFileWrite: '/tmp/_____test.txt' })
-            ).resolves.toMatchInlineSnapshot(`
-              Object {
-                "exists": true,
-                "overwrite": true,
-                "wroteFile": false,
-              }
-            `)
+        it('write error occurs', () => {
+          const { NewModule } = tf.utils.doMock({
+            'fs-extra': {
+              createReadStream: TestFramework.DUMMY_VALUES.FN_NOOP,
+              createWriteStream: TestFramework.DUMMY_VALUES.FN_NOOP,
+              ensureDir: TestFramework.DUMMY_VALUES.FN_NOOP,
+            },
+            promisepipe: {
+              default: () => TestFramework.getters.deferredPromise(({ reject }) => reject(new Error('nope'))),
+            },
           })
-        }
+          ;(NewModule as any).getters.fileInfo = () =>
+            TestFramework.getters.deferredPromise(({ resolve }) =>
+              resolve({
+                exists: false,
+                readable: true,
+                writeable: true,
+              })
+            )
+
+          const targetNewFn = NewModule.installFns[targetFnName]
+
+          return expect(
+            targetNewFn({ overwrite: true, pathFileInput: '/whatever', pathFileWrite: '/tmp/_____test.txt' })
+          ).resolves.toMatchInlineSnapshot(`
+            Object {
+              "exists": false,
+              "overwrite": true,
+              "wroteFile": false,
+            }
+          `)
+        })
       })
 
       describe('baseAndLog', () => {
@@ -424,10 +437,44 @@ describe(TargetModule.name, () => {
             .expectWithCalledTimes(input['just-task'].logger.info, 1)
             .toHaveBeenCalledWith('"pathFileWrite" was not written.')
         })
+
+        it('skips write if it is exluded', async () => {
+          const { NewModule, input } = tf.utils.doMock({
+            'just-task': {
+              logger: {
+                info: jest.fn<void, [string]>(),
+              },
+            },
+          })
+
+          const targetNewFn = NewModule.installFns[targetFnName]
+
+          await expect(
+            targetNewFn({
+              overwrite: true,
+              pathFileInput: 'pathFileInput',
+              pathFileWrite: 'pathFileWrite',
+              typescriptBaseRC: {
+                filesToCopy: {
+                  exclude: ['pathFileWrite'],
+                },
+              },
+            })
+          ).resolves.toMatchInlineSnapshot(`
+            Object {
+              "wroteFile": false,
+            }
+          `)
+
+          TestFramework.utils
+            .expectWithCalledTimes(input['just-task'].logger.info, 1)
+            .toHaveBeenCalledWith('"pathFileWrite" was not written.')
+        })
       })
 
       describe('packageJSON', () => {
         const targetFnName = 'packageJSON'
+        const targetFn = Install.installFns[targetFnName]
         const getBasePKGJSON = ({ scripts }: { readonly scripts?: { readonly [x: string]: string } } = {}) => ({
           scripts: {
             commit: 'git-cz',
@@ -440,6 +487,15 @@ describe(TargetModule.name, () => {
             ...scripts,
           },
         })
+
+        it('does nothing if config says so', () =>
+          expect(targetFn({ typescriptBaseRC: { modifyPackageJSON: false } })).resolves.toMatchInlineSnapshot(`
+            Object {
+              "new": undefined,
+              "original": undefined,
+              "wroteFile": false,
+            }
+          `))
 
         it('updates package json when it differs', async () => {
           const { NewModule, input } = tf.utils.doMock({
@@ -635,6 +691,9 @@ describe(TargetModule.name, () => {
         },
         {
           name: 'typescript',
+        },
+        {
+          name: 'editorconfig',
         },
       ].forEach(({ name }) => {
         it(name, async () => {

@@ -45,9 +45,7 @@ export declare const getBase: ({ isIntegration, isReact, moduleDirectories, onCo
     testEnvironment: string;
     testMatch: string[];
     testPathIgnorePatterns: string[];
-    transform: {
-        [x: string]: string;
-    };
+    transform: {};
 } & {
     readonly [x: string]: any;
     preset?: string | undefined;

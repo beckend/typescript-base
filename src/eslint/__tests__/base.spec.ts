@@ -54,7 +54,7 @@ describe('getBaseReact', () => {
             "impliedStrict": true,
             "modules": true,
           },
-          "ecmaVersion": 2019,
+          "ecmaVersion": 2020,
           "project": "/test/file.json",
           "sourceType": "module",
         },
@@ -70,6 +70,7 @@ describe('getBaseReact', () => {
             "error",
             "always",
           ],
+          "@typescript-eslint/no-empty-function": "off",
           "@typescript-eslint/no-explicit-any": "off",
           "@typescript-eslint/no-unused-vars": Array [
             "error",
@@ -79,6 +80,7 @@ describe('getBaseReact', () => {
               "vars": "all",
             },
           ],
+          "import/extensions": "off",
           "import/no-extraneous-dependencies": Array [
             "error",
             Object {
@@ -144,7 +146,7 @@ describe('getBaseReact', () => {
             "impliedStrict": true,
             "modules": true,
           },
-          "ecmaVersion": 2019,
+          "ecmaVersion": 2020,
           "project": undefined,
           "sourceType": "module",
         },
@@ -160,6 +162,7 @@ describe('getBaseReact', () => {
             "error",
             "always",
           ],
+          "@typescript-eslint/no-empty-function": "off",
           "@typescript-eslint/no-explicit-any": "off",
           "@typescript-eslint/no-unused-vars": Array [
             "error",
@@ -169,6 +172,7 @@ describe('getBaseReact', () => {
               "vars": "all",
             },
           ],
+          "import/extensions": "off",
           "import/no-extraneous-dependencies": Array [
             "error",
             Object {

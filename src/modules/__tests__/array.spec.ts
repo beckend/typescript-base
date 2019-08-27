@@ -1,6 +1,6 @@
-import { returnArray } from '../array'
+import { returnArray, toArray } from '../array'
 
-describe('array utols', () => {
+describe('array utils', () => {
   describe(returnArray.name, () => {
     it('return empty array if not an array', () => {
       ;['', 0, {}, null, undefined].forEach(x => {
@@ -12,6 +12,20 @@ describe('array utols', () => {
       const theArray = [1, 2, 3]
 
       expect(returnArray(theArray)).toEqual(theArray)
+    })
+  })
+
+  describe(toArray.name, () => {
+    it('converts payloads to array', () => {
+      ;[undefined, null, {}, {}, 1, '1'].forEach(x => {
+        expect(toArray(x)).toEqual([x])
+      })
+    })
+
+    it('returns as is if an array', () => {
+      const input: any[] = []
+
+      expect(toArray(input) === input).toBeTruthy()
     })
   })
 })

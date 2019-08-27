@@ -19,8 +19,8 @@ export declare class FilePatcher {
     };
     static utils: {
         fsExtra: typeof fsExtra;
-        logger: any;
-        path: typeof path;
+        logger: import("just-task").Logger;
+        path: path.PlatformPath;
         patchStringContent({ content, stringMatch, stringReplace, }: {
             readonly content: string | Buffer;
             readonly stringMatch: string;

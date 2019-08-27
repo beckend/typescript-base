@@ -1,14 +1,25 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import * as fs from 'fs-extra'
 import { dirname, join } from 'path'
+import { logger } from 'just-task'
+import { merge } from 'lodash'
+import * as fs from 'fs-extra'
 
+import { toArray } from '../modules/array'
 import config, { Configuration } from '../config'
 
 const promisePipe = require('promisepipe')
-const { logger } = require('just-task')
 
 export interface IInstallOptionsBase {
   readonly overwrite?: boolean
+  readonly typescriptBaseRC?: ITypescriptBaseRC
+}
+
+export interface ITypescriptBaseRC {
+  readonly filesToCopy?: {
+    readonly exclude?: Array<string>
+  }
+
+  readonly modifyPackageJSON?: boolean
 }
 
 const DIR = {
@@ -17,6 +28,16 @@ const DIR = {
 }
 
 export class Install {
+  public static defaults = {
+    baseRC: {
+      filesToCopy: {
+        exclude: [] as string[],
+      },
+
+      modifyPackageJSON: true,
+    },
+  }
+
   public static PATH = {
     DIR: {
       ROOT_INSTALL: join(config.PATH.DIR.ROOT, 'src/install'),
@@ -27,6 +48,7 @@ export class Install {
     FILE: {
       ROOT_APP: {
         packageJSON: join(DIR.ROOT_APP, 'package.json'),
+        typescriptBaseRC: join(DIR.ROOT_APP, 'typescriptbaserc.js'),
       },
     },
   }
@@ -36,7 +58,7 @@ export class Install {
   }
 
   public static getters = {
-    fileInfo: async ({ pathFile }: { readonly pathFile: string }) => {
+    async fileInfo({ pathFile }: { readonly pathFile: string }) {
       try {
         await fs
           // eslint-disable-next-line no-bitwise
@@ -64,6 +86,16 @@ export class Install {
       join(Install.PATH.DIR.ROOT_APP, pathFile),
     filePathRelativeToInstallFiles: ({ pathFile }: { readonly pathFile: string }) =>
       join(Install.PATH.DIR.FILES_INSTALL, pathFile),
+
+    async typescriptBaseRC(): Promise<typeof Install.defaults.baseRC> {
+      const { baseRC } = Install.defaults
+
+      try {
+        return merge(baseRC, await import(Install.PATH.FILE.ROOT_APP.typescriptBaseRC))
+      } catch {
+        return baseRC
+      }
+    },
   }
 
   public static installFns = {
@@ -122,15 +154,31 @@ export class Install {
         readonly pathWriteBase?: string
       }
     ) => {
-      const { pathWriteBase, pathFileWrite } = x
+      const { pathWriteBase, pathFileWrite, typescriptBaseRC: typescriptBaseRCInput } = x
       const writePath = join(pathWriteBase || '', pathFileWrite)
+      const { filesToCopy } = typescriptBaseRCInput || (await Install.getters.typescriptBaseRC())
+      const logNotWritten = () => {
+        logger.info(`"${writePath}" was not written.`)
+      }
+
+      if (
+        filesToCopy &&
+        filesToCopy.exclude &&
+        filesToCopy.exclude.includes(pathFileWrite.replace(Install.PATH.DIR.ROOT_APP, ''))
+      ) {
+        logNotWritten()
+
+        return {
+          wroteFile: false,
+        }
+      }
 
       const { overwrite, wroteFile } = await Install.installFns.base(x)
 
       if (wroteFile) {
         logger.info(`"${writePath}" was ${overwrite ? 'overwritten' : 'written'}.`)
       } else {
-        logger.info(`"${writePath}" was not written.`)
+        logNotWritten()
       }
 
       return {
@@ -139,17 +187,23 @@ export class Install {
     },
 
     listOfBaseAndLog: (
-      baseAndLogOptionsList: Array<
-        IInstallOptionsBase & {
-          readonly pathFileInput: string
-          readonly pathFileWrite: string
-          readonly pathWriteBase?: string
-        }
-      >,
+      baseAndLogOptionsList:
+        | Array<
+            IInstallOptionsBase & {
+              readonly pathFileInput: string
+              readonly pathFileWrite: string
+              readonly pathWriteBase?: string
+            }
+          >
+        | (IInstallOptionsBase & {
+            readonly pathFileInput: string
+            readonly pathFileWrite: string
+            readonly pathWriteBase?: string
+          }),
       options?: IInstallOptionsBase
     ) =>
       Promise.all(
-        baseAndLogOptionsList.map(x =>
+        toArray(baseAndLogOptionsList).map(x =>
           Install.installFns.baseAndLog({
             ...options,
             ...x,
@@ -157,7 +211,19 @@ export class Install {
         )
       ),
 
-    packageJSON: async () => {
+    packageJSON: async ({
+      typescriptBaseRC: typescriptBaseRCInput,
+    }: { typescriptBaseRC?: IInstallOptionsBase['typescriptBaseRC'] } = {}) => {
+      const { modifyPackageJSON } = typescriptBaseRCInput || (await Install.getters.typescriptBaseRC())
+
+      if (!modifyPackageJSON) {
+        return {
+          new: undefined,
+          original: undefined,
+          wroteFile: false,
+        }
+      }
+
       const packageJSON = await fs.readJson(Install.PATH.FILE.ROOT_APP.packageJSON)
       const originalContent = JSON.stringify(packageJSON)
 
@@ -219,6 +285,10 @@ export class Install {
       Install.installFns.listOfBaseAndLog(
         [
           {
+            pathFileInput: Install.getters.filePathRelativeToThisProjectRoot({ pathFile: '.vscode/extensions.json' }),
+            pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.vscode/extensions.json' }),
+          },
+          {
             pathFileInput: Install.getters.filePathRelativeToThisProjectRoot({ pathFile: '.vscode/settings.json' }),
             pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.vscode/settings.json' }),
           },
@@ -248,90 +318,83 @@ export class Install {
 
     husky: (options?: IInstallOptionsBase) =>
       Install.installFns.listOfBaseAndLog(
-        [
-          {
-            pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: '.huskyrc.js' }),
-            pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.huskyrc.js' }),
-          },
-        ],
+        {
+          pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: '.huskyrc.js' }),
+          pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.huskyrc.js' }),
+        },
         options
       ),
 
     git: (options?: IInstallOptionsBase) =>
       Install.installFns.listOfBaseAndLog(
-        [
-          {
-            // had to rename this file to gitignore otherwise npm would not publish it and the copy fails
-            pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: 'gitignore' }),
-            pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.gitignore' }),
-          },
-        ],
+        {
+          // had to rename this file to gitignore otherwise npm would not publish it and the copy fails
+          pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: 'gitignore' }),
+          pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.gitignore' }),
+        },
         options
       ),
 
     nvm: (options?: IInstallOptionsBase) =>
       Install.installFns.listOfBaseAndLog(
-        [
-          {
-            pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: '.nvmrc' }),
-            pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.nvmrc' }),
-          },
-        ],
+        {
+          pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: '.nvmrc' }),
+          pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.nvmrc' }),
+        },
         options
       ),
 
     prettier: (options?: IInstallOptionsBase) =>
       Install.installFns.listOfBaseAndLog(
-        [
-          {
-            pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: '.prettierrc.js' }),
-            pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.prettierrc.js' }),
-          },
-        ],
+        {
+          pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: '.prettierrc.js' }),
+          pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.prettierrc.js' }),
+        },
         options
       ),
 
     stylelint: (options?: IInstallOptionsBase) =>
       Install.installFns.listOfBaseAndLog(
-        [
-          {
-            pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: '.stylelintrc.js' }),
-            pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.stylelintrc.js' }),
-          },
-        ],
+        {
+          pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: '.stylelintrc.js' }),
+          pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.stylelintrc.js' }),
+        },
         options
       ),
 
     commitlint: (options?: IInstallOptionsBase) =>
       Install.installFns.listOfBaseAndLog(
-        [
-          {
-            pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: 'commitlint.config.js' }),
-            pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: 'commitlint.config.js' }),
-          },
-        ],
+        {
+          pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: 'commitlint.config.js' }),
+          pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: 'commitlint.config.js' }),
+        },
         options
       ),
 
     jest: (options?: IInstallOptionsBase) =>
       Install.installFns.listOfBaseAndLog(
-        [
-          {
-            pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: 'jest.config.js' }),
-            pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: 'jest.config.js' }),
-          },
-        ],
+        {
+          pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: 'jest.config.js' }),
+          pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: 'jest.config.js' }),
+        },
         options
       ),
 
     typescript: (options?: IInstallOptionsBase) =>
       Install.installFns.listOfBaseAndLog(
-        [
-          {
-            pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: 'tsconfig.json' }),
-            pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: 'tsconfig.json' }),
-          },
-        ],
+        {
+          pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: 'tsconfig.json' }),
+          pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: 'tsconfig.json' }),
+        },
+        options
+      ),
+
+    editorconfig: (options?: IInstallOptionsBase) =>
+      Install.installFns.listOfBaseAndLog(
+        {
+          pathFileInput: Install.getters.filePathRelativeToInstallFiles({ pathFile: '.editorconfig' }),
+          pathFileWrite: Install.getters.filePathRelativeToAppRoot({ pathFile: '.editorconfig' }),
+        },
         options
       ),
   }

@@ -28,7 +28,9 @@ export declare const getBaseReact: ({ packageDirs, pathFileTSConfig, ...rest }?:
             packageDir: any[];
         })[];
         'import/no-unresolved': string;
+        'import/extensions': string;
         'import/prefer-default-export': string;
+        '@typescript-eslint/no-empty-function': string;
         '@typescript-eslint/indent': string;
         '@typescript-eslint/no-explicit-any': string;
         '@typescript-eslint/explicit-function-return-type': string;

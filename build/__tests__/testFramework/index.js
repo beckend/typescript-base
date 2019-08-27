@@ -30,7 +30,7 @@ class TestFramework {
                     const theObjectValue = obj[theModulePath];
                     const value = lodash.isObject(theObjectValue) ? lodash.omit(theObjectValue, extraOptionsKeys) : theObjectValue;
                     const pathIsRelative = ['..', './'].some(x => theModulePath.startsWith(x));
-                    const requirePath = pathIsRelative ? path_1.join(this.moduleBasePath, theModulePath) : theModulePath;
+                    const requirePath = pathIsRelative ? path_1.join(this.moduleBasePath || '', theModulePath) : theModulePath;
                     jest.doMock(requirePath, () => {
                         if (lodash.isObject(value)) {
                             // user overrideable per module
@@ -91,6 +91,7 @@ class TestFramework {
         this.modulePath = modulePath;
     }
 }
+exports.TestFramework = TestFramework;
 TestFramework.DUMMY_VALUES = Object.freeze({
     BOOL_FALSE: false,
     BOOL_TRUE: true,
@@ -123,7 +124,7 @@ TestFramework.setup = {
 TestFramework.utils = {
     Puppeteer: puppeteer_1.Puppeteer,
     lodash,
-    mockConsole,
+    mockConsole: mockConsole.default,
     // eslint-disable-next-line global-require
     mockFS: require('mock-fs'),
     expectWithCalledTimes(spy, times = 1) {
@@ -131,4 +132,3 @@ TestFramework.utils = {
         return expect(spy);
     },
 };
-exports.TestFramework = TestFramework;

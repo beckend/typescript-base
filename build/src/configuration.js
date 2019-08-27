@@ -16,7 +16,7 @@ class Configuration {
         };
     }
 }
+exports.Configuration = Configuration;
 Configuration.packageJSON = packageJSON;
 Configuration.isBuild = __filename.endsWith('.js');
 Configuration.isTest = process.env.NODE_ENV === 'test';
-exports.Configuration = Configuration;

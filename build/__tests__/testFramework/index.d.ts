@@ -1,4 +1,7 @@
 /// <reference types="jest" />
+/// <reference types="testing-library__jest-dom" />
+/// <reference types="jest-image-snapshot" />
+/// <reference types="expect-puppeteer" />
 import * as lodash from 'lodash';
 import * as mockConsole from 'jest-mock-console';
 import { Puppeteer } from './puppeteer';
@@ -33,17 +36,17 @@ export declare class TestFramework<TComponent = any> {
     static utils: {
         Puppeteer: typeof Puppeteer;
         lodash: lodash.LoDashStatic;
-        mockConsole: typeof mockConsole;
+        mockConsole: typeof mockConsole.default;
         mockFS: any;
-        expectWithCalledTimes<T1 extends jest.Mock<any, any>>(spy: T1, times?: number): jest.Matchers<T1>;
+        expectWithCalledTimes<T1 extends jest.Mock<any, any>>(spy: T1, times?: number): jest.JestMatchersShape<jest.Matchers<void, T1>, jest.Matchers<Promise<void>, T1>>;
     };
     TargetComponent: TComponent;
-    moduleBasePath: string;
+    moduleBasePath?: string;
     moduleKey?: string;
     modulePath: string;
     constructor({ TargetComponent, moduleBasePath, moduleKey, modulePath, }: {
         readonly TargetComponent?: TComponent;
-        readonly moduleBasePath: string;
+        readonly moduleBasePath?: string;
         readonly moduleKey?: string;
         readonly modulePath: string;
     });

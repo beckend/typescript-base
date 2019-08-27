@@ -1,9 +1,7 @@
+import { EOL } from 'os'
+import { logger } from 'just-task'
 import * as fsExtra from 'fs-extra'
 import * as path from 'path'
-import { EOL } from 'os'
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { logger } = require('just-task')
 
 export type TPatchFileOnFile = (x: {
   readonly content: Buffer

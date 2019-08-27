@@ -62,6 +62,7 @@ export declare class Configuration {
             "just-task": string;
             "lodash": string;
             "mock-fs": string;
+            "npm-check-updates": string;
             "prettier": string;
             "promisepipe": string;
             "standard-version": string;
@@ -79,6 +80,8 @@ export declare class Configuration {
             "@types/puppeteer": string;
             "@types/react": string;
             "@types/react-dom": string;
+            "@types/undertaker": string;
+            "@types/yargs": string;
             "eslint-config-airbnb": string;
             "eslint-plugin-react": string;
             "eslint-plugin-react-hooks": string;
