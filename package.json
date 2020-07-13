@@ -60,7 +60,7 @@
     "mock-fs": "^4.12.0",
     "prettier": "^2.0.5",
     "promisepipe": "^3.0.0",
-    "standard-version": "^8.0.0",
+    "standard-version": "^8.0.1",
     "ts-jest": "^26.1.0",
     "tslib": "^2.0.0"
   },
